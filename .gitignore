@@ -1,0 +1,34 @@
+# Environment
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# PHP dependencies
+vendor/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# AI Models
+*.pkl
+*.joblib
+
+# Datasets
+*.csv
+*.xlsx
+
+# Temporary files
+*.tmp
