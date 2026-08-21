@@ -755,6 +755,107 @@ h4,
     }
 }
 
+/* ---------- Auth & Placeholder Pages ---------- */
+
+.auth-page,
+.placeholder-page {
+    padding: 3.5rem 0 4.5rem;
+}
+
+.auth-card,
+.placeholder-card {
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    padding: 2rem 1.75rem;
+}
+
+.placeholder-card {
+    max-width: 640px;
+}
+
+.auth-title,
+.placeholder-title {
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    font-weight: 600;
+    margin-bottom: 0.55rem;
+    color: var(--color-ink);
+}
+
+.auth-subtitle,
+.placeholder-text {
+    color: var(--color-muted);
+    margin-bottom: 1.5rem;
+}
+
+.placeholder-label {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--color-teal);
+    margin-bottom: 0.65rem;
+}
+
+.auth-card .form-label {
+    font-weight: 600;
+    color: var(--color-ink-soft);
+}
+
+.auth-card .form-control,
+.auth-card .form-select {
+    border-color: var(--color-border);
+    border-radius: 0.45rem;
+    padding: 0.7rem 0.9rem;
+}
+
+.auth-card .form-control:focus,
+.auth-card .form-select:focus {
+    border-color: var(--color-teal);
+    box-shadow: 0 0 0 0.2rem rgba(15, 107, 99, 0.15);
+}
+
+.btn-auth {
+    font-weight: 600;
+    border-radius: 0.45rem;
+    padding: 0.75rem 1.35rem;
+    background: var(--color-teal);
+    border: 1px solid var(--color-teal);
+    color: var(--color-white);
+}
+
+.btn-auth:hover {
+    background: var(--color-teal-dark);
+    border-color: var(--color-teal-dark);
+    color: var(--color-white);
+}
+
+.auth-switch {
+    margin-top: 1.25rem;
+    margin-bottom: 0;
+    text-align: center;
+    color: var(--color-muted);
+}
+
+.auth-switch a {
+    color: var(--color-teal-dark);
+    font-weight: 600;
+}
+
+.auth-switch a:hover {
+    color: var(--color-teal);
+}
+
+.nav-user-name {
+    font-size: 0.92rem;
+    color: var(--color-ink-soft);
+    font-weight: 600;
+    margin-right: 0.25rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;

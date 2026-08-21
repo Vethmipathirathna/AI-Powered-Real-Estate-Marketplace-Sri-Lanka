@@ -1,7 +1,13 @@
+<?php
+$user = current_user();
+$scriptName = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+$isHome = str_ends_with($scriptName, '/index.php') && !preg_match('#/(auth|buyer|seller|admin|properties)/#', $scriptName);
+$homeHref = url('index.php');
+?>
 <header class="site-header">
     <nav class="navbar navbar-expand-lg navbar-light" aria-label="Primary">
         <div class="container">
-            <a class="navbar-brand" href="index.php">
+            <a class="navbar-brand" href="<?php echo e($homeHref); ?>">
                 <span class="brand-mark">RealEstateAI</span>
             </a>
             <button
@@ -18,26 +24,30 @@
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="index.php">Home</a>
+                        <a class="nav-link<?php echo $isHome ? ' active' : ''; ?>"<?php echo $isHome ? ' aria-current="page"' : ''; ?> href="<?php echo e($homeHref); ?>">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#featured-properties">Properties</a>
+                        <a class="nav-link" href="<?php echo e($homeHref); ?>#featured-properties">Properties</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#ai-estimator">AI Price Estimator</a>
+                        <a class="nav-link" href="<?php echo e($homeHref); ?>#ai-estimator">AI Price Estimator</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
+                        <a class="nav-link" href="<?php echo e($homeHref); ?>#about">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
+                        <a class="nav-link" href="<?php echo e($homeHref); ?>#contact">Contact</a>
                     </li>
                 </ul>
                 <div class="nav-actions d-flex align-items-center gap-2">
-                    <!-- Future route: auth/login.php -->
-                    <a class="btn btn-nav-login" href="#">Login</a>
-                    <!-- Future route: auth/register.php -->
-                    <a class="btn btn-nav-register" href="#">Register</a>
+                    <?php if ($user !== null): ?>
+                        <span class="nav-user-name d-none d-lg-inline"><?php echo e($user['full_name']); ?></span>
+                        <a class="btn btn-nav-register" href="<?php echo e(url(dashboard_path_for_role($user['role']))); ?>">Dashboard</a>
+                        <a class="btn btn-nav-login" href="<?php echo e(url('auth/logout.php')); ?>">Logout</a>
+                    <?php else: ?>
+                        <a class="btn btn-nav-login" href="<?php echo e(url('auth/login.php')); ?>">Login</a>
+                        <a class="btn btn-nav-register" href="<?php echo e(url('auth/register.php')); ?>">Register</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
