@@ -5,6 +5,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../properties/_helpers.php';
 require_once __DIR__ . '/_helpers.php';
+require_once __DIR__ . '/../includes/messaging.php';
 
 require_role('BUYER');
 
@@ -13,12 +14,14 @@ $userId = (int) ($user['user_id'] ?? 0);
 $flash = flash_get();
 $availableCount = null;
 $favoritesCount = null;
+$unreadMessages = null;
 $loadError = null;
 
 try {
     $pdo = db();
     $availableCount = marketplace_count_available($pdo);
     $favoritesCount = buyer_count_available_favorites($pdo, $userId);
+    $unreadMessages = message_unread_count($pdo, $userId, 'BUYER');
 } catch (Throwable $e) {
     $loadError = 'Unable to load marketplace stats right now.';
 }
@@ -61,6 +64,12 @@ $page_description = 'Your RealEstateAI buyer dashboard.';
                         <span class="stat-value"><?php echo e((string) $favoritesCount); ?></span>
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <span class="stat-label">Unread messages</span>
+                        <span class="stat-value"><?php echo e((string) ($unreadMessages ?? 0)); ?></span>
+                    </div>
+                </div>
             </div>
         <?php endif; ?>
 
@@ -91,11 +100,13 @@ $page_description = 'Your RealEstateAI buyer dashboard.';
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="shortcut-card h-100">
+                    <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('buyer/messages.php')); ?>">
                         <h3 class="shortcut-title">Messages</h3>
-                        <p class="shortcut-text">Contact property listers directly from the marketplace.</p>
-                        <span class="shortcut-badge">Coming soon</span>
-                    </div>
+                        <p class="shortcut-text">Contact property listers and follow up on your conversations.</p>
+                        <span class="shortcut-badge">
+                            <?php echo ($unreadMessages ?? 0) > 0 ? e((string) $unreadMessages) . ' unread' : 'Open inbox'; ?>
+                        </span>
+                    </a>
                 </div>
             </div>
         </section>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/_helpers.php';
+require_once __DIR__ . '/../includes/messaging.php';
 
 require_role('SELLER');
 
@@ -20,6 +21,7 @@ $stats = [
     'sold' => 0,
     'inactive' => 0,
 ];
+$unreadMessages = 0;
 $loadError = null;
 
 try {
@@ -45,6 +47,7 @@ try {
             $stats['inactive'] = $total;
         }
     }
+    $unreadMessages = message_unread_count($pdo, $userId, 'SELLER');
 } catch (Throwable $e) {
     $loadError = 'Unable to load your listing statistics right now.';
 }
@@ -96,23 +99,33 @@ try {
                     <div class="col-6 col-md-4 col-xl">
                         <div class="stat-card"><span class="stat-label">Inactive</span><strong class="stat-value"><?php echo e((string) $stats['inactive']); ?></strong></div>
                     </div>
+                    <div class="col-6 col-md-4 col-xl">
+                        <div class="stat-card"><span class="stat-label">Unread messages</span><strong class="stat-value"><?php echo e((string) $unreadMessages); ?></strong></div>
+                    </div>
                 </div>
             </section>
 
             <section class="admin-section">
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('seller/property_create.php')); ?>">
                             <h3 class="shortcut-title">Add Property</h3>
                             <p class="shortcut-text">Create a new listing for Admin review.</p>
                             <span class="shortcut-badge">New listing</span>
                         </a>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('seller/properties.php')); ?>">
                             <h3 class="shortcut-title">My Properties</h3>
                             <p class="shortcut-text">View and edit the listings you own.</p>
                             <span class="shortcut-badge">Manage</span>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('seller/messages.php')); ?>">
+                            <h3 class="shortcut-title">Messages</h3>
+                            <p class="shortcut-text">Read and reply to buyer inquiries for your listings.</p>
+                            <span class="shortcut-badge"><?php echo $unreadMessages > 0 ? e((string) $unreadMessages) . ' unread' : 'Open inbox'; ?></span>
                         </a>
                     </div>
                 </div>

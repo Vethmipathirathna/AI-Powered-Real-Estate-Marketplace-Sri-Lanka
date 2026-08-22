@@ -156,14 +156,26 @@ $page_description = $notFound || $property === null
                         <h2 class="summary-title">Listed By</h2>
                         <p class="mb-1 fw-semibold"><?php echo e((string) ($property['lister_name'] ?? '')); ?></p>
                         <p class="mb-0 text-muted">Role: <?php echo e((string) ($property['lister_role'] ?? '')); ?></p>
-                        <p class="form-text mt-2 mb-0">Contact details will be available when messaging launches.</p>
                     </section>
 
-                    <section class="summary-panel">
-                        <h2 class="summary-title">Contact lister</h2>
-                        <p class="text-muted small">Direct messaging between buyers and listers is coming soon.</p>
-                        <button type="button" class="btn btn-outline-secondary w-100" disabled>Contact — Coming Soon</button>
-                    </section>
+                    <?php
+                    $currentUser = current_user();
+                    $currentRole = strtoupper((string) ($currentUser['role'] ?? ''));
+                    $isBuyerViewer = buyer_is_buyer($currentUser);
+                    ?>
+                    <?php if ($isBuyerViewer): ?>
+                        <section class="summary-panel">
+                            <h2 class="summary-title">Contact lister</h2>
+                            <p class="text-muted small mb-3">Send a private message about this listing. Contact details stay protected inside RealEstateAI.</p>
+                            <a class="btn btn-auth w-100" href="<?php echo e(url('buyer/conversation.php?property_id=' . $propertyId)); ?>">Contact Lister</a>
+                        </section>
+                    <?php elseif ($currentUser === null): ?>
+                        <section class="summary-panel">
+                            <h2 class="summary-title">Contact lister</h2>
+                            <p class="text-muted small mb-3">Log in as a buyer to message the lister about this property.</p>
+                            <a class="btn btn-auth w-100" href="<?php echo e(url('auth/login.php?return=' . rawurlencode($detailReturnPath))); ?>">Login to Contact Lister</a>
+                        </section>
+                    <?php endif; ?>
                 </div>
             </div>
         <?php endif; ?>

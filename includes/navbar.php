@@ -4,9 +4,20 @@ $scriptName = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? ''));
 $isHome = str_ends_with($scriptName, '/index.php') && !preg_match('#/(auth|buyer|seller|admin|properties)/#', $scriptName);
 $isProperties = str_contains($scriptName, '/properties/');
 $isBuyerFavorites = str_contains($scriptName, '/buyer/favorites.php');
+$isMessagesPage = preg_match('#/(buyer|seller)/messages\.php$#', $scriptName) === 1
+    || str_contains($scriptName, '/admin/messages.php')
+    || str_contains($scriptName, '/conversation.php');
 $homeHref = url('index.php');
 $propertiesHref = url('properties/index.php');
 $isBuyer = $user !== null && strtoupper((string) ($user['role'] ?? '')) === 'BUYER';
+$userRole = strtoupper((string) ($user['role'] ?? ''));
+$messagesHref = match ($userRole) {
+    'BUYER' => url('buyer/messages.php'),
+    'SELLER' => url('seller/messages.php'),
+    'ADMIN' => url('admin/messages.php'),
+    default => null,
+};
+$messagesLabel = $userRole === 'ADMIN' ? 'My Messages' : 'Messages';
 ?>
 <header class="site-header">
     <nav class="navbar navbar-expand-lg navbar-light" aria-label="Primary">
@@ -45,6 +56,11 @@ $isBuyer = $user !== null && strtoupper((string) ($user['role'] ?? '')) === 'BUY
                     <?php if ($isBuyer): ?>
                         <li class="nav-item">
                             <a class="nav-link<?php echo $isBuyerFavorites ? ' active' : ''; ?>"<?php echo $isBuyerFavorites ? ' aria-current="page"' : ''; ?> href="<?php echo e(url('buyer/favorites.php')); ?>">My Favorites</a>
+                        </li>
+                    <?php endif; ?>
+                    <?php if ($messagesHref !== null): ?>
+                        <li class="nav-item">
+                            <a class="nav-link<?php echo $isMessagesPage ? ' active' : ''; ?>"<?php echo $isMessagesPage ? ' aria-current="page"' : ''; ?> href="<?php echo e($messagesHref); ?>"><?php echo e($messagesLabel); ?></a>
                         </li>
                     <?php endif; ?>
                 </ul>

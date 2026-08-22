@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../includes/messaging.php';
 
 require_role('ADMIN');
 
@@ -25,6 +26,7 @@ $stats = [
 ];
 $recentUsers = [];
 $recentProperties = [];
+$ownListingUnread = 0;
 $loadError = null;
 
 try {
@@ -78,6 +80,7 @@ try {
          LIMIT 5'
     );
     $recentProperties = $propertiesStmt->fetchAll();
+    $ownListingUnread = message_unread_count($pdo, (int) ($user['user_id'] ?? 0), 'ADMIN');
 } catch (Throwable $e) {
     $loadError = 'Unable to load dashboard data right now. Please try again later.';
 }
@@ -205,21 +208,28 @@ function admin_format_date(?string $datetime): string
                     <p class="admin-section-text">User and property management are available. AI records coming soon.</p>
                 </div>
                 <div class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/users.php')); ?>">
                             <h3 class="shortcut-title">Manage Users</h3>
                             <p class="shortcut-text">Review and manage buyer, seller and admin accounts.</p>
                             <span class="shortcut-badge">Open module</span>
                         </a>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/properties.php')); ?>">
                             <h3 class="shortcut-title">Manage Properties</h3>
                             <p class="shortcut-text">Moderate listings and property publication status.</p>
                             <span class="shortcut-badge">Open module</span>
                         </a>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/messages.php')); ?>">
+                            <h3 class="shortcut-title">My Listing Messages</h3>
+                            <p class="shortcut-text">Private buyer conversations for properties you listed — not other listers' inboxes.</p>
+                            <span class="shortcut-badge"><?php echo $ownListingUnread > 0 ? e((string) $ownListingUnread) . ' unread' : 'Open inbox'; ?></span>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
                         <div class="shortcut-card">
                             <h3 class="shortcut-title">AI Prediction Records</h3>
                             <p class="shortcut-text">Inspect historical AI price estimation requests.</p>
