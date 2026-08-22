@@ -8,6 +8,8 @@ require_once __DIR__ . '/_helpers.php';
 
 require_role('ADMIN');
 
+$adminUser = current_user();
+$adminUserId = (int) ($adminUser['user_id'] ?? 0);
 $flash = null;
 $loadError = null;
 $perPage = 10;
@@ -117,7 +119,7 @@ try {
     $offset = ($page - 1) * $perPage;
 
     $listSql = "SELECT p.property_id, p.title, p.district, p.property_type, p.asking_price_lkr,
-                       p.status, p.created_at,
+                       p.status, p.created_at, p.listed_by_user_id,
                        u.full_name AS lister_name, u.email AS lister_email, u.role AS lister_role,
                        (
                            SELECT pi.image_path
@@ -159,10 +161,13 @@ $queryBase = [
             <span>Property Management</span>
         </nav>
 
-        <div class="admin-hero">
-            <p class="admin-eyebrow">Administration</p>
-            <h1 class="admin-title">Property Management</h1>
-            <p class="admin-welcome">Review listings, inspect details and moderate publication status.</p>
+        <div class="admin-hero d-flex flex-wrap justify-content-between align-items-start gap-3">
+            <div>
+                <p class="admin-eyebrow">Administration</p>
+                <h1 class="admin-title">Property Management</h1>
+                <p class="admin-welcome mb-0">Review listings, inspect details and moderate publication status.</p>
+            </div>
+            <a class="btn btn-auth" href="<?php echo e(url('admin/property_create.php')); ?>">Add Own Property</a>
         </div>
 
         <?php if ($flash !== null): ?>
@@ -233,6 +238,7 @@ $queryBase = [
                                         $rowId = (int) ($row['property_id'] ?? 0);
                                         $rowStatus = (string) ($row['status'] ?? '');
                                         $thumb = admin_image_url($row['primary_image'] ?? null);
+                                        $isOwnListing = (int) ($row['listed_by_user_id'] ?? 0) === $adminUserId;
                                         ?>
                                         <tr>
                                             <td><?php echo e((string) $rowId); ?></td>
@@ -259,6 +265,9 @@ $queryBase = [
                                             <td>
                                                 <div class="action-stack">
                                                     <a class="btn btn-sm btn-outline-secondary" href="<?php echo e(url('admin/property_view.php?id=' . $rowId)); ?>">View</a>
+                                                    <?php if ($isOwnListing): ?>
+                                                        <a class="btn btn-sm btn-outline-secondary" href="<?php echo e(url('admin/property_edit.php?id=' . $rowId)); ?>">Edit</a>
+                                                    <?php endif; ?>
                                                     <form method="post" action="" class="status-inline-form">
                                                         <?php echo csrf_field(); ?>
                                                         <input type="hidden" name="action" value="update_status">

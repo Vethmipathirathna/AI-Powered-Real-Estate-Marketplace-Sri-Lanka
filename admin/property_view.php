@@ -8,6 +8,8 @@ require_once __DIR__ . '/_helpers.php';
 
 require_role('ADMIN');
 
+$adminUser = current_user();
+$adminUserId = (int) ($adminUser['user_id'] ?? 0);
 $propertyId = (int) ($_GET['id'] ?? $_POST['property_id'] ?? 0);
 $property = null;
 $images = [];
@@ -100,6 +102,7 @@ $page_description = 'Admin property details for RealEstateAI.';
         <?php else: ?>
             <?php
             $status = (string) ($property['status'] ?? '');
+            $isOwnListing = (int) ($property['listed_by_user_id'] ?? 0) === $adminUserId;
             ?>
             <div class="admin-hero d-flex flex-wrap justify-content-between align-items-start gap-3">
                 <div>
@@ -111,7 +114,12 @@ $page_description = 'Admin property details for RealEstateAI.';
                     </p>
                     <p class="mb-0 fw-semibold"><?php echo e(admin_format_lkr($property['asking_price_lkr'] ?? 0)); ?></p>
                 </div>
-                <a class="btn btn-outline-secondary" href="<?php echo e(url('admin/properties.php')); ?>">Back to list</a>
+                <div class="d-flex flex-wrap gap-2">
+                    <?php if ($isOwnListing): ?>
+                        <a class="btn btn-auth" href="<?php echo e(url('admin/property_edit.php?id=' . (int) $property['property_id'])); ?>">Edit Own Listing</a>
+                    <?php endif; ?>
+                    <a class="btn btn-outline-secondary" href="<?php echo e(url('admin/properties.php')); ?>">Back to list</a>
+                </div>
             </div>
 
             <div class="row g-4">
@@ -155,7 +163,7 @@ $page_description = 'Admin property details for RealEstateAI.';
                                     ?>
                                     <figure class="property-gallery-item<?php echo $isPrimary ? ' is-primary' : ''; ?>">
                                         <?php if ($imgUrl !== null): ?>
-                                            <img src="<?php echo e($imgUrl); ?>" alt="<?php echo e($isPrimary ? 'Primary property image' : 'Property image'); ?>" loading="lazy">
+                                            <img src="<?php echo e($imgUrl); ?>" alt="<?php echo e($isPrimary ? 'Primary property image' : 'Property image'); ?>" loading="lazy" width="800" height="600">
                                         <?php else: ?>
                                             <div class="property-thumb-placeholder gallery-placeholder">Unavailable</div>
                                         <?php endif; ?>
@@ -180,7 +188,13 @@ $page_description = 'Admin property details for RealEstateAI.';
 
                     <section class="summary-panel">
                         <h2 class="summary-title">Moderate status</h2>
-                        <p class="text-muted small">Admin may change listing status only. Lister content edits are handled separately.</p>
+                        <p class="text-muted small">
+                            <?php if ($isOwnListing): ?>
+                                You own this listing. Content and images are edited on the Edit Own Listing page. Status can still be changed here.
+                            <?php else: ?>
+                                Admin may change listing status only. Lister content edits are not available for other users' properties.
+                            <?php endif; ?>
+                        </p>
                         <form method="post" action="">
                             <?php echo csrf_field(); ?>
                             <input type="hidden" name="action" value="update_status">
