@@ -1,14 +1,7 @@
 // RealEstateAI - Main JavaScript
 
 document.addEventListener('DOMContentLoaded', function () {
-    var searchForm = document.querySelector('.search-form');
     var navbarCollapse = document.getElementById('mainNavbar');
-
-    if (searchForm) {
-        searchForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-        });
-    }
 
     // Close the mobile menu after choosing a nav link
     if (navbarCollapse && typeof bootstrap !== 'undefined') {

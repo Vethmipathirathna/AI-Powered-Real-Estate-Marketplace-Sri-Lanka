@@ -386,6 +386,46 @@ h4,
     object-position: center;
 }
 
+.property-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface-alt);
+    color: var(--color-muted);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.property-type-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-teal-dark);
+}
+
+.property-lister {
+    margin-top: -0.35rem;
+}
+
+.marketplace-page {
+    padding: 2.5rem 0 3.5rem;
+}
+
+.marketplace-hero {
+    margin-bottom: 1.75rem;
+}
+
+.marketplace-filters .form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.marketplace-count {
+    font-size: 0.95rem;
+}
+
 .property-body {
     padding: 1.35rem 1.25rem 1.4rem;
     display: flex;

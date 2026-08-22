@@ -2,32 +2,92 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../properties/_helpers.php';
 
 require_role('BUYER');
 
 $user = current_user();
 $flash = flash_get();
+$availableCount = null;
+$loadError = null;
+
+try {
+    $availableCount = marketplace_count_available(db());
+} catch (Throwable $e) {
+    $loadError = 'Unable to load marketplace stats right now.';
+}
+
 $page_title = 'Buyer Dashboard | RealEstateAI';
-$page_description = 'Buyer dashboard placeholder for RealEstateAI.';
+$page_description = 'Your RealEstateAI buyer dashboard.';
 ?>
 <?php include __DIR__ . '/../includes/header.php'; ?>
 <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
-<main id="main-content" class="placeholder-page">
+<main id="main-content" class="admin-dashboard">
     <div class="container">
-        <div class="placeholder-card">
-            <?php if ($flash !== null): ?>
-                <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : 'danger'; ?>" role="alert">
-                    <?php echo e($flash['message']); ?>
-                </div>
-            <?php endif; ?>
-            <p class="placeholder-label">Buyer area</p>
-            <h1 class="placeholder-title">Welcome, <?php echo e($user['full_name'] ?? ''); ?></h1>
-            <p class="placeholder-text">
-                This is a protected buyer placeholder page. Property search, favorites, messaging and AI tools will be added in later stages.
+        <div class="admin-hero">
+            <p class="admin-eyebrow">Buyer area</p>
+            <h1 class="admin-title">Welcome, <?php echo e($user['full_name'] ?? ''); ?></h1>
+            <p class="admin-welcome">
+                Browse available listings across Sri Lanka. Favorites, messaging and AI price tools will arrive in later stages.
             </p>
-            <a class="btn btn-auth" href="<?php echo e(url('index.php')); ?>">Back to Home</a>
         </div>
+
+        <?php if ($flash !== null): ?>
+            <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : 'danger'; ?>" role="alert">
+                <?php echo e($flash['message']); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($loadError !== null): ?>
+            <div class="alert alert-warning" role="alert"><?php echo e($loadError); ?></div>
+        <?php elseif ($availableCount !== null): ?>
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <span class="stat-label">Available listings</span>
+                        <span class="stat-value"><?php echo e((string) $availableCount); ?></span>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <section class="admin-section" aria-labelledby="buyer-shortcuts-heading">
+            <div class="admin-section-header">
+                <h2 id="buyer-shortcuts-heading" class="admin-section-title">Quick access</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('properties/index.php')); ?>">
+                        <h3 class="shortcut-title">Browse Properties</h3>
+                        <p class="shortcut-text">Search and filter AVAILABLE homes, apartments, land and commercial listings.</p>
+                        <span class="shortcut-badge">Open marketplace</span>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="shortcut-card h-100">
+                        <h3 class="shortcut-title">AI Price Estimator</h3>
+                        <p class="shortcut-text">Estimate fair market value with AI insights built for Sri Lanka.</p>
+                        <span class="shortcut-badge">Coming soon</span>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="shortcut-card h-100">
+                        <h3 class="shortcut-title">Favorites</h3>
+                        <p class="shortcut-text">Save listings you want to revisit later.</p>
+                        <span class="shortcut-badge">Coming soon</span>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="shortcut-card h-100">
+                        <h3 class="shortcut-title">Messages</h3>
+                        <p class="shortcut-text">Contact property listers directly from the marketplace.</p>
+                        <span class="shortcut-badge">Coming soon</span>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 </main>
 

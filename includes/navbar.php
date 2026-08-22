@@ -2,7 +2,9 @@
 $user = current_user();
 $scriptName = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? ''));
 $isHome = str_ends_with($scriptName, '/index.php') && !preg_match('#/(auth|buyer|seller|admin|properties)/#', $scriptName);
+$isProperties = str_contains($scriptName, '/properties/');
 $homeHref = url('index.php');
+$propertiesHref = url('properties/index.php');
 ?>
 <header class="site-header">
     <nav class="navbar navbar-expand-lg navbar-light" aria-label="Primary">
@@ -27,7 +29,7 @@ $homeHref = url('index.php');
                         <a class="nav-link<?php echo $isHome ? ' active' : ''; ?>"<?php echo $isHome ? ' aria-current="page"' : ''; ?> href="<?php echo e($homeHref); ?>">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo e($homeHref); ?>#featured-properties">Properties</a>
+                        <a class="nav-link<?php echo $isProperties ? ' active' : ''; ?>"<?php echo $isProperties ? ' aria-current="page"' : ''; ?> href="<?php echo e($propertiesHref); ?>">Properties</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo e($homeHref); ?>#ai-estimator">AI Price Estimator</a>

@@ -11,7 +11,7 @@
                 <h2 class="footer-heading">Quick Links</h2>
                 <ul class="footer-links list-unstyled">
                     <li><a href="<?php echo e(url('index.php')); ?>">Home</a></li>
-                    <li><a href="<?php echo e(url('index.php')); ?>#featured-properties">Properties</a></li>
+                    <li><a href="<?php echo e(url('properties/index.php')); ?>">Properties</a></li>
                     <li><a href="<?php echo e(url('index.php')); ?>#ai-estimator">AI Estimator</a></li>
                     <li><a href="<?php echo e(url('index.php')); ?>#about">About</a></li>
                     <li><a href="<?php echo e(url('index.php')); ?>#contact">Contact</a></li>
@@ -20,10 +20,10 @@
             <div class="col-lg-3 col-md-6">
                 <h2 class="footer-heading">Properties</h2>
                 <ul class="footer-links list-unstyled">
-                    <li><a href="<?php echo e(url('index.php')); ?>#featured-properties">Houses for Sale</a></li>
-                    <li><a href="<?php echo e(url('index.php')); ?>#featured-properties">Apartments</a></li>
-                    <li><a href="<?php echo e(url('index.php')); ?>#featured-properties">Land Plots</a></li>
-                    <li><a href="<?php echo e(url('index.php')); ?>#search">Search Properties</a></li>
+                    <li><a href="<?php echo e(url('properties/index.php?property_type=HOUSE')); ?>">Houses for Sale</a></li>
+                    <li><a href="<?php echo e(url('properties/index.php?property_type=APARTMENT')); ?>">Apartments</a></li>
+                    <li><a href="<?php echo e(url('properties/index.php?property_type=LAND')); ?>">Land Plots</a></li>
+                    <li><a href="<?php echo e(url('properties/index.php')); ?>">Search Properties</a></li>
                     <li><a href="<?php echo e(url('auth/register.php')); ?>">List Your Property</a></li>
                 </ul>
             </div>

@@ -1,5 +1,24 @@
-<?php include 'includes/header.php'; ?>
-<?php include 'includes/navbar.php'; ?>
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/properties/_helpers.php';
+
+$featured = [];
+$featuredError = null;
+
+try {
+    $featured = marketplace_featured_properties(db(), 6);
+} catch (Throwable $e) {
+    $featuredError = 'Unable to load featured properties right now.';
+}
+
+$page_title = 'RealEstateAI | Intelligent Real Estate Marketplace';
+$page_description = 'Discover properties across Sri Lanka and estimate house prices with AI-powered insights.';
+?>
+<?php include __DIR__ . '/includes/header.php'; ?>
+<?php include __DIR__ . '/includes/navbar.php'; ?>
 
 <main id="main-content">
     <!-- Hero -->
@@ -14,14 +33,14 @@
                     Discover houses, apartments and land across the island — then estimate fair market value with AI-powered price insights built for Sri Lanka.
                 </p>
                 <div class="hero-actions">
-                    <a href="#featured-properties" class="btn btn-hero-primary">Browse Properties</a>
+                    <a href="<?php echo e(url('properties/index.php')); ?>" class="btn btn-hero-primary">Browse Properties</a>
                     <a href="#ai-estimator" class="btn btn-hero-secondary">Estimate House Price</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Property Search (UI only — no database search yet) -->
+    <!-- Property Search → marketplace -->
     <section class="search-section" id="search" aria-labelledby="search-heading">
         <div class="container">
             <div class="search-panel">
@@ -29,33 +48,23 @@
                     <h2 id="search-heading" class="section-title">Search Properties</h2>
                     <p class="section-subtitle">Filter by district, type and budget to find the right match.</p>
                 </div>
-                <form class="row g-3 align-items-end search-form" action="#" method="get" aria-label="Property search">
+                <form class="row g-3 align-items-end search-form" action="<?php echo e(url('properties/index.php')); ?>" method="get" aria-label="Property search">
                     <div class="col-lg-3 col-md-6">
                         <label for="district" class="form-label">District</label>
                         <select class="form-select" id="district" name="district">
                             <option value="" selected>All Districts</option>
-                            <option value="colombo">Colombo</option>
-                            <option value="gampaha">Gampaha</option>
-                            <option value="kalutara">Kalutara</option>
-                            <option value="kandy">Kandy</option>
-                            <option value="galle">Galle</option>
-                            <option value="matara">Matara</option>
-                            <option value="kurunegala">Kurunegala</option>
-                            <option value="jaffna">Jaffna</option>
-                            <option value="anuradhapura">Anuradhapura</option>
-                            <option value="ratnapura">Ratnapura</option>
-                            <option value="badulla">Badulla</option>
-                            <option value="nuwara-eliya">Nuwara Eliya</option>
+                            <?php foreach (marketplace_sri_lanka_districts() as $district): ?>
+                                <option value="<?php echo e($district); ?>"><?php echo e($district); ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="col-lg-2 col-md-6">
                         <label for="property-type" class="form-label">Property Type</label>
                         <select class="form-select" id="property-type" name="property_type">
                             <option value="" selected>Any Type</option>
-                            <option value="house">House</option>
-                            <option value="apartment">Apartment</option>
-                            <option value="land">Land</option>
-                            <option value="commercial">Commercial</option>
+                            <?php foreach (marketplace_property_types() as $type): ?>
+                                <option value="<?php echo e($type); ?>"><?php echo e(ucfirst(strtolower($type))); ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="col-lg-2 col-md-6">
@@ -84,176 +93,37 @@
                         <button type="submit" class="btn btn-search w-100">Search Properties</button>
                     </div>
                 </form>
-                <p class="search-note">Demo search panel — database filtering will be connected in a later stage.</p>
             </div>
         </div>
     </section>
 
-    <!-- Featured Properties (demo/frontend placeholder data only) -->
+    <!-- Featured Properties (AVAILABLE marketplace data) -->
     <section class="properties-section" id="featured-properties" aria-labelledby="featured-heading">
         <div class="container">
             <div class="section-intro text-center">
                 <h2 id="featured-heading" class="section-title">Featured Properties</h2>
-                <p class="section-subtitle">Sample listings for demonstration — not live marketplace data.</p>
+                <p class="section-subtitle">Latest AVAILABLE listings on the RealEstateAI marketplace.</p>
             </div>
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
-                    <article class="property-card">
-                        <div class="property-media">
-                            <img
-                                class="property-image"
-                                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80"
-                                alt="Modern two-storey house exterior in Colombo 7"
-                                width="900"
-                                height="600"
-                                loading="lazy"
-                            >
-                        </div>
-                        <div class="property-body">
-                            <h3 class="property-title">Modern Two-Storey House in Colombo 7</h3>
-                            <p class="property-location">Colombo, Western Province</p>
-                            <p class="property-price">LKR 85,000,000</p>
-                            <ul class="property-meta list-unstyled">
-                                <li><span>4</span> Bedrooms</li>
-                                <li><span>3</span> Bathrooms</li>
-                                <li><span>3,200</span> sq.ft</li>
-                            </ul>
-                            <!-- Future route: properties/view.php -->
-                            <a href="#" class="btn btn-property">View Details</a>
-                        </div>
-                    </article>
+
+            <?php if ($featuredError !== null): ?>
+                <div class="alert alert-warning" role="alert"><?php echo e($featuredError); ?></div>
+            <?php elseif ($featured === []): ?>
+                <div class="summary-panel text-center">
+                    <p class="empty-state mb-3">No available properties have been published yet.</p>
+                    <a class="btn btn-auth" href="<?php echo e(url('properties/index.php')); ?>">Browse Properties</a>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <article class="property-card">
-                        <div class="property-media">
-                            <img
-                                class="property-image"
-                                src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=900&q=80"
-                                alt="Bright sea-view apartment living space in Galle Face"
-                                width="900"
-                                height="600"
-                                loading="lazy"
-                            >
+            <?php else: ?>
+                <div class="row g-4">
+                    <?php foreach ($featured as $property): ?>
+                        <div class="col-lg-4 col-md-6">
+                            <?php include __DIR__ . '/properties/_card.php'; ?>
                         </div>
-                        <div class="property-body">
-                            <h3 class="property-title">Sea-View Apartment in Galle Face</h3>
-                            <p class="property-location">Colombo, Western Province</p>
-                            <p class="property-price">LKR 62,500,000</p>
-                            <ul class="property-meta list-unstyled">
-                                <li><span>3</span> Bedrooms</li>
-                                <li><span>2</span> Bathrooms</li>
-                                <li><span>1,450</span> sq.ft</li>
-                            </ul>
-                            <!-- Future route: properties/view.php -->
-                            <a href="#" class="btn btn-property">View Details</a>
-                        </div>
-                    </article>
+                    <?php endforeach; ?>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <article class="property-card">
-                        <div class="property-media">
-                            <img
-                                class="property-image"
-                                src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=900&q=80"
-                                alt="Colonial-style bungalow near Kandy Lake"
-                                width="900"
-                                height="600"
-                                loading="lazy"
-                            >
-                        </div>
-                        <div class="property-body">
-                            <h3 class="property-title">Colonial Bungalow near Kandy Lake</h3>
-                            <p class="property-location">Kandy, Central Province</p>
-                            <p class="property-price">LKR 48,000,000</p>
-                            <ul class="property-meta list-unstyled">
-                                <li><span>5</span> Bedrooms</li>
-                                <li><span>3</span> Bathrooms</li>
-                                <li><span>4,100</span> sq.ft</li>
-                            </ul>
-                            <!-- Future route: properties/view.php -->
-                            <a href="#" class="btn btn-property">View Details</a>
-                        </div>
-                    </article>
+                <div class="text-center mt-4">
+                    <a class="btn btn-auth" href="<?php echo e(url('properties/index.php')); ?>">View All Properties</a>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <article class="property-card">
-                        <div class="property-media">
-                            <img
-                                class="property-image"
-                                src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=900&q=80"
-                                alt="Contemporary beach house in Unawatuna"
-                                width="900"
-                                height="600"
-                                loading="lazy"
-                            >
-                        </div>
-                        <div class="property-body">
-                            <h3 class="property-title">Beach House in Unawatuna</h3>
-                            <p class="property-location">Galle, Southern Province</p>
-                            <p class="property-price">LKR 55,750,000</p>
-                            <ul class="property-meta list-unstyled">
-                                <li><span>3</span> Bedrooms</li>
-                                <li><span>2</span> Bathrooms</li>
-                                <li><span>2,400</span> sq.ft</li>
-                            </ul>
-                            <!-- Future route: properties/view.php -->
-                            <a href="#" class="btn btn-property">View Details</a>
-                        </div>
-                    </article>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <article class="property-card">
-                        <div class="property-media">
-                            <img
-                                class="property-image"
-                                src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=900&q=80"
-                                alt="Spacious family home exterior in Negombo"
-                                width="900"
-                                height="600"
-                                loading="lazy"
-                            >
-                        </div>
-                        <div class="property-body">
-                            <h3 class="property-title">Spacious Family Home in Negombo</h3>
-                            <p class="property-location">Gampaha, Western Province</p>
-                            <p class="property-price">LKR 32,900,000</p>
-                            <ul class="property-meta list-unstyled">
-                                <li><span>4</span> Bedrooms</li>
-                                <li><span>2</span> Bathrooms</li>
-                                <li><span>2,800</span> sq.ft</li>
-                            </ul>
-                            <!-- Future route: properties/view.php -->
-                            <a href="#" class="btn btn-property">View Details</a>
-                        </div>
-                    </article>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <article class="property-card">
-                        <div class="property-media">
-                            <img
-                                class="property-image"
-                                src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80"
-                                alt="Open residential land plot in Kaduwela"
-                                width="900"
-                                height="600"
-                                loading="lazy"
-                            >
-                        </div>
-                        <div class="property-body">
-                            <h3 class="property-title">Residential Land Plot in Kaduwela</h3>
-                            <p class="property-location">Colombo, Western Province</p>
-                            <p class="property-price">LKR 18,500,000</p>
-                            <ul class="property-meta list-unstyled">
-                                <li><span>0</span> Bedrooms</li>
-                                <li><span>0</span> Bathrooms</li>
-                                <li><span>20</span> Perches</li>
-                            </ul>
-                            <!-- Future route: properties/view.php -->
-                            <a href="#" class="btn btn-property">View Details</a>
-                        </div>
-                    </article>
-                </div>
-            </div>
+            <?php endif; ?>
         </div>
     </section>
 
@@ -269,8 +139,7 @@
                             Our upcoming AI model will estimate property values for the Sri Lankan market using details such as
                             district/location, land size, bedrooms, bathrooms and property facilities.
                         </p>
-                        <!-- Future route: AI estimator page -->
-                        <a href="#" class="btn btn-ai">Estimate Your Property</a>
+                        <span class="btn btn-ai disabled" aria-disabled="true">Estimate Your Property — Coming Soon</span>
                     </div>
                     <div class="col-lg-5">
                         <div class="ai-visual" aria-hidden="true">
@@ -360,4 +229,4 @@
     </section>
 </main>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>
