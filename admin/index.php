@@ -202,15 +202,15 @@ function admin_format_date(?string $datetime): string
             <section class="admin-section" aria-labelledby="shortcuts-heading">
                 <div class="admin-section-header">
                     <h2 id="shortcuts-heading" class="admin-section-title">Management Shortcuts</h2>
-                    <p class="admin-section-text">Future modules — not available yet.</p>
+                    <p class="admin-section-text">User management is available. Other modules coming soon.</p>
                 </div>
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <div class="shortcut-card">
+                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/users.php')); ?>">
                             <h3 class="shortcut-title">Manage Users</h3>
                             <p class="shortcut-text">Review and manage buyer, seller and admin accounts.</p>
-                            <span class="shortcut-badge">Coming soon</span>
-                        </div>
+                            <span class="shortcut-badge">Open module</span>
+                        </a>
                     </div>
                     <div class="col-md-4">
                         <div class="shortcut-card">
