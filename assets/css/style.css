@@ -856,6 +856,190 @@ h4,
     margin-right: 0.25rem;
 }
 
+/* ---------- Admin Dashboard ---------- */
+
+.admin-dashboard {
+    padding: 2.75rem 0 4.5rem;
+}
+
+.admin-hero {
+    margin-bottom: 2rem;
+}
+
+.admin-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--color-teal);
+    margin-bottom: 0.55rem;
+}
+
+.admin-title {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 600;
+    margin-bottom: 0.55rem;
+    color: var(--color-ink);
+}
+
+.admin-welcome {
+    max-width: 40rem;
+    color: var(--color-muted);
+    margin-bottom: 0;
+}
+
+.admin-section {
+    margin-bottom: 2.25rem;
+}
+
+.admin-section-header {
+    margin-bottom: 1rem;
+}
+
+.admin-section-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+.admin-section-text {
+    color: var(--color-muted);
+    margin-bottom: 0;
+}
+
+.stat-card,
+.summary-panel,
+.shortcut-card,
+.table-panel {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+}
+
+.stat-card {
+    height: 100%;
+    padding: 1.15rem 1rem;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    margin-bottom: 0.45rem;
+}
+
+.stat-value {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--color-teal-dark);
+    line-height: 1.1;
+}
+
+.summary-panel,
+.shortcut-card,
+.table-panel {
+    padding: 1.35rem 1.25rem;
+    height: 100%;
+}
+
+.summary-title,
+.shortcut-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.9rem;
+}
+
+.summary-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-ink-soft);
+}
+
+.summary-list li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.summary-list strong {
+    color: var(--color-ink);
+}
+
+.shortcut-text {
+    color: var(--color-muted);
+    margin-bottom: 1rem;
+}
+
+.shortcut-badge {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-teal-dark);
+    background: var(--color-teal-soft);
+    border-radius: 0.4rem;
+    padding: 0.35rem 0.65rem;
+}
+
+.admin-table {
+    --bs-table-bg: transparent;
+    margin-bottom: 0;
+}
+
+.admin-table th {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-muted);
+    font-weight: 700;
+    border-bottom-color: var(--color-border);
+    white-space: nowrap;
+}
+
+.admin-table td {
+    vertical-align: middle;
+    color: var(--color-ink-soft);
+    border-bottom-color: var(--color-border);
+}
+
+.status-pill {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--color-teal-dark);
+    background: var(--color-teal-soft);
+    border-radius: 0.35rem;
+    padding: 0.2rem 0.5rem;
+}
+
+.empty-state {
+    color: var(--color-muted);
+    margin: 0;
+}
+
+@media (max-width: 575.98px) {
+    .admin-dashboard {
+        padding-top: 2rem;
+    }
+
+    .stat-value {
+        font-size: 1.4rem;
+    }
+
+    .table-panel,
+    .summary-panel,
+    .shortcut-card {
+        padding: 1.1rem 1rem;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;
