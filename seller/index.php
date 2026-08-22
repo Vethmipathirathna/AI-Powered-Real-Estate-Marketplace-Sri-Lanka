@@ -128,6 +128,13 @@ try {
                             <span class="shortcut-badge"><?php echo $unreadMessages > 0 ? e((string) $unreadMessages) . ' unread' : 'Open inbox'; ?></span>
                         </a>
                     </div>
+                    <div class="col-md-4">
+                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('ai/estimate.php')); ?>">
+                            <h3 class="shortcut-title">AI Price Estimator</h3>
+                            <p class="shortcut-text">Generate an AI-powered house price estimate for Sri Lankan properties.</p>
+                            <span class="shortcut-badge">Get estimate</span>
+                        </a>
+                    </div>
                 </div>
             </section>
         <?php endif; ?>

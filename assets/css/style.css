@@ -1596,6 +1596,70 @@ h4,
     margin-top: 0;
 }
 
+/* AI Estimator */
+.ai-estimator-page .ai-result-card {
+    border-left: 4px solid var(--brand-primary, #2563eb);
+}
+
+.ai-result-price {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.ai-result-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ai-disclaimer {
+    color: #64748b;
+    font-size: 0.92rem;
+}
+
+.ai-estimate-form .form-label {
+    font-weight: 600;
+}
+
+.ai-history-table td:nth-child(3) {
+    min-width: 10rem;
+}
+
+.ai-history-table th:last-child,
+.ai-history-table td:last-child {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.ai-history-table th:nth-last-child(2),
+.ai-history-table td:nth-last-child(2) {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.ai-prediction-detail-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 767.98px) {
+    .ai-prediction-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ai-area-other-wrap[hidden] {
+    display: none !important;
+}
+
+.ai-area-other-wrap:not([hidden]) {
+    display: block;
+}
+
+@media (max-width: 767.98px) {
+    .ai-result-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 575.98px) {
     .admin-dashboard {
         padding-top: 2rem;

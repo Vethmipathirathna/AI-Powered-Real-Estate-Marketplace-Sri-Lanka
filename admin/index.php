@@ -230,11 +230,11 @@ function admin_format_date(?string $datetime): string
                         </a>
                     </div>
                     <div class="col-md-3">
-                        <div class="shortcut-card">
-                            <h3 class="shortcut-title">AI Prediction Records</h3>
-                            <p class="shortcut-text">Inspect historical AI price estimation requests.</p>
-                            <span class="shortcut-badge">Coming soon</span>
-                        </div>
+                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('ai/estimate.php')); ?>">
+                            <h3 class="shortcut-title">AI Price Estimator</h3>
+                            <p class="shortcut-text">Generate an AI-powered house price estimate for Sri Lankan properties.</p>
+                            <span class="shortcut-badge">Get estimate</span>
+                        </a>
                     </div>
                 </div>
             </section>

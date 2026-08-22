@@ -93,11 +93,11 @@ $page_description = 'Your RealEstateAI buyer dashboard.';
                     </a>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="shortcut-card h-100">
+                    <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('ai/estimate.php')); ?>">
                         <h3 class="shortcut-title">AI Price Estimator</h3>
                         <p class="shortcut-text">Estimate fair market value with AI insights built for Sri Lanka.</p>
-                        <span class="shortcut-badge">Coming soon</span>
-                    </div>
+                        <span class="shortcut-badge">Get estimate</span>
+                    </a>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('buyer/messages.php')); ?>">

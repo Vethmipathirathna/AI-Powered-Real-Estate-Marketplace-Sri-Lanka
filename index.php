@@ -9,6 +9,10 @@ require_once __DIR__ . '/buyer/_helpers.php';
 $featured = [];
 $featuredError = null;
 $favoritePropertyIds = [];
+$homeUser = current_user();
+$aiEstimatorCtaHref = $homeUser !== null && in_array(strtoupper((string) ($homeUser['role'] ?? '')), ['BUYER', 'SELLER', 'ADMIN'], true)
+    ? url('ai/estimate.php')
+    : url('auth/login.php');
 
 try {
     $pdo = db();
@@ -43,7 +47,7 @@ $page_description = 'Discover properties across Sri Lanka and estimate house pri
                 </p>
                 <div class="hero-actions">
                     <a href="<?php echo e(url('properties/index.php')); ?>" class="btn btn-hero-primary">Browse Properties</a>
-                    <a href="#ai-estimator" class="btn btn-hero-secondary">Estimate House Price</a>
+                    <a href="<?php echo e($aiEstimatorCtaHref); ?>" class="btn btn-hero-secondary">Estimate House Price</a>
                 </div>
             </div>
         </div>
@@ -136,7 +140,7 @@ $page_description = 'Discover properties across Sri Lanka and estimate house pri
         </div>
     </section>
 
-    <!-- AI Price Estimation intro (no AI functionality yet) -->
+    <!-- AI Price Estimation -->
     <section class="ai-section" id="ai-estimator" aria-labelledby="ai-heading">
         <div class="container">
             <div class="ai-panel">
@@ -145,10 +149,10 @@ $page_description = 'Discover properties across Sri Lanka and estimate house pri
                         <p class="ai-label">AI Price Estimator</p>
                         <h2 id="ai-heading" class="ai-title">Not Sure What Your House Is Worth?</h2>
                         <p class="ai-text">
-                            Our upcoming AI model will estimate property values for the Sri Lankan market using details such as
+                            Our AI model estimates property values for the Sri Lankan market using details such as
                             district/location, land size, bedrooms, bathrooms and property facilities.
                         </p>
-                        <span class="btn btn-ai disabled" aria-disabled="true">Estimate Your Property — Coming Soon</span>
+                        <a class="btn btn-ai" href="<?php echo e($aiEstimatorCtaHref); ?>">Estimate Your Property</a>
                     </div>
                     <div class="col-lg-5">
                         <div class="ai-visual" aria-hidden="true">

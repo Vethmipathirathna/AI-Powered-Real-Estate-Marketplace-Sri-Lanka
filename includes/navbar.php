@@ -7,6 +7,8 @@ $isBuyerFavorites = str_contains($scriptName, '/buyer/favorites.php');
 $isMessagesPage = preg_match('#/(buyer|seller)/messages\.php$#', $scriptName) === 1
     || str_contains($scriptName, '/admin/messages.php')
     || str_contains($scriptName, '/conversation.php');
+$isAiEstimator = str_contains($scriptName, '/ai/estimate.php');
+$isAiHistory = str_contains($scriptName, '/ai/history.php');
 $homeHref = url('index.php');
 $propertiesHref = url('properties/index.php');
 $isBuyer = $user !== null && strtoupper((string) ($user['role'] ?? '')) === 'BUYER';
@@ -18,6 +20,8 @@ $messagesHref = match ($userRole) {
     default => null,
 };
 $messagesLabel = $userRole === 'ADMIN' ? 'My Messages' : 'Messages';
+$canUseAiEstimator = $user !== null && in_array($userRole, ['BUYER', 'SELLER', 'ADMIN'], true);
+$aiEstimatorHref = $canUseAiEstimator ? url('ai/estimate.php') : url('auth/login.php');
 ?>
 <header class="site-header">
     <nav class="navbar navbar-expand-lg navbar-light" aria-label="Primary">
@@ -45,7 +49,7 @@ $messagesLabel = $userRole === 'ADMIN' ? 'My Messages' : 'Messages';
                         <a class="nav-link<?php echo $isProperties ? ' active' : ''; ?>"<?php echo $isProperties ? ' aria-current="page"' : ''; ?> href="<?php echo e($propertiesHref); ?>">Properties</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo e($homeHref); ?>#ai-estimator">AI Price Estimator</a>
+                        <a class="nav-link<?php echo $isAiEstimator ? ' active' : ''; ?>"<?php echo $isAiEstimator ? ' aria-current="page"' : ''; ?> href="<?php echo e($aiEstimatorHref); ?>">AI Price Estimator</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo e($homeHref); ?>#about">About</a>
@@ -56,6 +60,11 @@ $messagesLabel = $userRole === 'ADMIN' ? 'My Messages' : 'Messages';
                     <?php if ($isBuyer): ?>
                         <li class="nav-item">
                             <a class="nav-link<?php echo $isBuyerFavorites ? ' active' : ''; ?>"<?php echo $isBuyerFavorites ? ' aria-current="page"' : ''; ?> href="<?php echo e(url('buyer/favorites.php')); ?>">My Favorites</a>
+                        </li>
+                    <?php endif; ?>
+                    <?php if ($canUseAiEstimator): ?>
+                        <li class="nav-item">
+                            <a class="nav-link<?php echo $isAiHistory ? ' active' : ''; ?>"<?php echo $isAiHistory ? ' aria-current="page"' : ''; ?> href="<?php echo e(url('ai/history.php')); ?>">Prediction History</a>
                         </li>
                     <?php endif; ?>
                     <?php if ($messagesHref !== null): ?>

@@ -16,4 +16,29 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
+
+    var areaSelect = document.getElementById('area_select');
+    var areaOtherWrap = document.querySelector('.ai-area-other-wrap');
+    var areaOtherInput = document.getElementById('area_other');
+
+    function syncAreaOtherField() {
+        if (!areaSelect || !areaOtherWrap) {
+            return;
+        }
+        var otherValue = areaSelect.getAttribute('data-other-value') || '__other__';
+        var useOther = areaSelect.value === otherValue;
+        areaOtherWrap.hidden = !useOther;
+        if (areaOtherInput) {
+            if (useOther) {
+                areaOtherInput.setAttribute('required', 'required');
+            } else {
+                areaOtherInput.removeAttribute('required');
+            }
+        }
+    }
+
+    if (areaSelect) {
+        areaSelect.addEventListener('change', syncAreaOtherField);
+        syncAreaOtherField();
+    }
 });

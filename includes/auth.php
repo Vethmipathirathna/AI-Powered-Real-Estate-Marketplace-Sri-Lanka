@@ -42,7 +42,7 @@ if (!function_exists('app_base_url')) {
         $dir = str_replace('\\', '/', dirname($script));
         $leaf = basename($dir);
 
-        if (in_array($leaf, ['auth', 'buyer', 'seller', 'admin', 'properties'], true)) {
+        if (in_array($leaf, ['auth', 'buyer', 'seller', 'admin', 'properties', 'ai'], true)) {
             $dir = dirname($dir);
         }
 
