@@ -142,12 +142,12 @@ $page_description = 'Admin property details for RealEstateAI.';
                         </dl>
                     </section>
 
-                    <section class="summary-panel">
+                    <section class="summary-panel property-gallery-section">
                         <h2 class="summary-title">Property images</h2>
                         <?php if ($images === []): ?>
-                            <div class="property-gallery-empty">No images uploaded for this listing.</div>
+                            <p class="property-gallery-empty mb-0">No images have been uploaded for this property.</p>
                         <?php else: ?>
-                            <div class="property-gallery">
+                            <div class="property-gallery<?php echo count($images) === 1 ? ' is-single' : ''; ?>">
                                 <?php foreach ($images as $image): ?>
                                     <?php
                                     $imgUrl = admin_image_url($image['image_path'] ?? null);

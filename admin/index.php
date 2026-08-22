@@ -175,7 +175,7 @@ function admin_format_date(?string $datetime): string
                 </div>
                 <div class="row g-4">
                     <div class="col-lg-6">
-                        <div class="summary-panel">
+                        <div class="summary-panel h-100">
                             <h3 class="summary-title">Users by Role</h3>
                             <ul class="summary-list list-unstyled mb-0">
                                 <li><span>BUYER</span><strong><?php echo e((string) $stats['buyers']); ?></strong></li>
@@ -185,7 +185,7 @@ function admin_format_date(?string $datetime): string
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div class="summary-panel">
+                        <div class="summary-panel h-100">
                             <h3 class="summary-title">Properties by Status</h3>
                             <ul class="summary-list list-unstyled mb-0">
                                 <li><span>Total</span><strong><?php echo e((string) $stats['total_properties']); ?></strong></li>
