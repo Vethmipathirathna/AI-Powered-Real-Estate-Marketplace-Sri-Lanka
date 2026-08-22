@@ -4,15 +4,24 @@ declare(strict_types=1);
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/properties/_helpers.php';
+require_once __DIR__ . '/buyer/_helpers.php';
 
 $featured = [];
 $featuredError = null;
+$favoritePropertyIds = [];
 
 try {
-    $featured = marketplace_featured_properties(db(), 6);
+    $pdo = db();
+    $featured = marketplace_featured_properties($pdo, 6);
+    $user = current_user();
+    if (buyer_is_buyer($user)) {
+        $favoritePropertyIds = buyer_favorite_property_ids($pdo, (int) ($user['user_id'] ?? 0));
+    }
 } catch (Throwable $e) {
     $featuredError = 'Unable to load featured properties right now.';
 }
+
+$favoriteReturnPath = 'index.php#featured-properties';
 
 $page_title = 'RealEstateAI | Intelligent Real Estate Marketplace';
 $page_description = 'Discover properties across Sri Lanka and estimate house prices with AI-powered insights.';

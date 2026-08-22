@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/_helpers.php';
+require_once __DIR__ . '/../buyer/_helpers.php';
 
 $filters = marketplace_parse_filters($_GET);
 $properties = [];
@@ -11,6 +12,8 @@ $total = 0;
 $totalPages = 1;
 $districts = marketplace_sri_lanka_districts();
 $loadError = null;
+$favoritePropertyIds = [];
+$marketplaceReturnPath = 'properties/index.php';
 
 try {
     $pdo = db();
@@ -24,6 +27,15 @@ try {
 
     [$properties, $total, $totalPages, $page] = marketplace_search_properties($pdo, $filters);
     $filters['page'] = $page;
+
+    $user = current_user();
+    if (buyer_is_buyer($user)) {
+        $favoritePropertyIds = buyer_favorite_property_ids($pdo, (int) ($user['user_id'] ?? 0));
+    }
+
+    $marketplaceReturnPath = 'properties/index.php' . marketplace_build_query(
+        marketplace_filter_query_params($filters, true)
+    );
 } catch (Throwable $e) {
     $loadError = 'Unable to load properties right now. Please try again later.';
 }
@@ -130,7 +142,10 @@ $page_description = 'Browse available houses, apartments, land and commercial pr
                     </div>
                 <?php else: ?>
                     <div class="row g-4">
-                        <?php foreach ($properties as $property): ?>
+                        <?php
+                        $favoriteReturnPath = $marketplaceReturnPath;
+                        foreach ($properties as $property):
+                        ?>
                             <div class="col-lg-4 col-md-6">
                                 <?php include __DIR__ . '/_card.php'; ?>
                             </div>

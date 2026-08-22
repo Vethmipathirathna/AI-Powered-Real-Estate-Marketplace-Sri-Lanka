@@ -3,8 +3,11 @@
  * Shared marketplace property card partial.
  *
  * Expects: $property (array)
+ * Optional: $favoritePropertyIds (list<int>), $favoriteReturnPath (string), $hideFavoriteButton (bool)
  */
 declare(strict_types=1);
+
+require_once __DIR__ . '/../buyer/_helpers.php';
 
 $cardId = (int) ($property['property_id'] ?? 0);
 $cardTitle = (string) ($property['title'] ?? '');
@@ -19,6 +22,15 @@ $cardLister = (string) ($property['lister_name'] ?? '');
 $cardRole = (string) ($property['lister_role'] ?? '');
 $cardThumb = admin_image_url($property['primary_image'] ?? null);
 $locationLabel = $cardArea !== '' ? ($cardDistrict . ', ' . $cardArea) : $cardDistrict;
+
+$cardUser = current_user();
+$showFavoriteButton = !($hideFavoriteButton ?? false) && buyer_is_buyer($cardUser);
+$isFavorited = false;
+if ($showFavoriteButton) {
+    $favoriteIds = $favoritePropertyIds ?? [];
+    $isFavorited = in_array($cardId, $favoriteIds, true);
+}
+$cardReturnPath = buyer_safe_return_path($favoriteReturnPath ?? 'properties/index.php');
 ?>
 <article class="property-card">
     <div class="property-media">
@@ -53,6 +65,18 @@ $locationLabel = $cardArea !== '' ? ($cardDistrict . ', ' . $cardArea) : $cardDi
                 <?php endif; ?>
             </p>
         <?php endif; ?>
-        <a class="btn btn-property" href="<?php echo e(url('properties/view.php?id=' . $cardId)); ?>">View Details</a>
+        <div class="property-card-actions">
+            <a class="btn btn-property" href="<?php echo e(url('properties/view.php?id=' . $cardId)); ?>">View Details</a>
+            <?php if ($showFavoriteButton): ?>
+                <?php
+                $favoritePropertyId = $cardId;
+                $favoriteReturnPath = $cardReturnPath;
+                $favoriteInline = true;
+                include __DIR__ . '/_favorite_button.php';
+                ?>
+            <?php elseif ($cardUser === null): ?>
+                <a class="btn btn-outline-secondary btn-sm favorite-guest-link" href="<?php echo e(url('auth/login.php')); ?>" title="Login to Add Favorite" aria-label="Login to Add Favorite">♡ Login to Add Favorite</a>
+            <?php endif; ?>
+        </div>
     </div>
 </article>

@@ -4,16 +4,21 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../properties/_helpers.php';
+require_once __DIR__ . '/_helpers.php';
 
 require_role('BUYER');
 
 $user = current_user();
+$userId = (int) ($user['user_id'] ?? 0);
 $flash = flash_get();
 $availableCount = null;
+$favoritesCount = null;
 $loadError = null;
 
 try {
-    $availableCount = marketplace_count_available(db());
+    $pdo = db();
+    $availableCount = marketplace_count_available($pdo);
+    $favoritesCount = buyer_count_available_favorites($pdo, $userId);
 } catch (Throwable $e) {
     $loadError = 'Unable to load marketplace stats right now.';
 }
@@ -30,7 +35,7 @@ $page_description = 'Your RealEstateAI buyer dashboard.';
             <p class="admin-eyebrow">Buyer area</p>
             <h1 class="admin-title">Welcome, <?php echo e($user['full_name'] ?? ''); ?></h1>
             <p class="admin-welcome">
-                Browse available listings across Sri Lanka. Favorites, messaging and AI price tools will arrive in later stages.
+                Browse available listings, save favorites, and explore Sri Lanka property opportunities.
             </p>
         </div>
 
@@ -42,12 +47,18 @@ $page_description = 'Your RealEstateAI buyer dashboard.';
 
         <?php if ($loadError !== null): ?>
             <div class="alert alert-warning" role="alert"><?php echo e($loadError); ?></div>
-        <?php elseif ($availableCount !== null): ?>
+        <?php else: ?>
             <div class="row g-4 mb-4">
                 <div class="col-md-4">
                     <div class="stat-card">
                         <span class="stat-label">Available listings</span>
                         <span class="stat-value"><?php echo e((string) $availableCount); ?></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <span class="stat-label">Saved favorites (available)</span>
+                        <span class="stat-value"><?php echo e((string) $favoritesCount); ?></span>
                     </div>
                 </div>
             </div>
@@ -66,16 +77,16 @@ $page_description = 'Your RealEstateAI buyer dashboard.';
                     </a>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="shortcut-card h-100">
-                        <h3 class="shortcut-title">AI Price Estimator</h3>
-                        <p class="shortcut-text">Estimate fair market value with AI insights built for Sri Lanka.</p>
-                        <span class="shortcut-badge">Coming soon</span>
-                    </div>
+                    <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('buyer/favorites.php')); ?>">
+                        <h3 class="shortcut-title">My Favorites</h3>
+                        <p class="shortcut-text">Review properties you have saved for later.</p>
+                        <span class="shortcut-badge">View saved listings</span>
+                    </a>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="shortcut-card h-100">
-                        <h3 class="shortcut-title">Favorites</h3>
-                        <p class="shortcut-text">Save listings you want to revisit later.</p>
+                        <h3 class="shortcut-title">AI Price Estimator</h3>
+                        <p class="shortcut-text">Estimate fair market value with AI insights built for Sri Lanka.</p>
                         <span class="shortcut-badge">Coming soon</span>
                     </div>
                 </div>

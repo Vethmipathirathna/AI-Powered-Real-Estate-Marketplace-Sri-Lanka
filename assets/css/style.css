@@ -426,6 +426,102 @@ h4,
     font-size: 0.95rem;
 }
 
+.favorite-form-inline {
+    margin: 0;
+}
+
+.favorite-form-compact .favorite-btn-card {
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    padding: 0.35rem 0.55rem;
+    font-size: 1.15rem;
+    line-height: 1;
+    box-shadow: var(--shadow-soft);
+}
+
+.favorite-heart-btn.is-favorited {
+    font-weight: 600;
+}
+
+.favorite-guest-link {
+    white-space: normal;
+}
+
+.property-card-actions {
+    --property-card-action-gap: 0.65rem;
+    --property-card-action-min-height: 2.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: var(--property-card-action-gap);
+    margin-top: auto;
+    width: 100%;
+}
+
+.property-card-actions > .btn-property,
+.property-card-actions > .favorite-form-inline,
+.property-card-actions > .favorite-guest-link {
+    flex: 1 1 calc(50% - (var(--property-card-action-gap) / 2));
+    min-width: 0;
+    margin: 0;
+}
+
+.property-card-actions .btn-property {
+    align-self: stretch;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: var(--property-card-action-min-height);
+    padding: 0.65rem 0.85rem;
+    line-height: 1.25;
+    border-radius: 0.45rem;
+    text-align: center;
+}
+
+.property-card-actions .favorite-form-inline {
+    display: flex;
+    padding: 0;
+}
+
+.property-card-actions .favorite-form-inline .favorite-btn-inline {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: var(--property-card-action-min-height);
+    padding: 0.65rem 0.85rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.25;
+    border-radius: 0.45rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: normal;
+    text-align: center;
+}
+
+.property-card-actions .favorite-guest-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: var(--property-card-action-min-height);
+    padding: 0.65rem 0.85rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.25;
+    border-radius: 0.45rem;
+    text-align: center;
+}
+
+.favorite-unavailable {
+    min-height: 100%;
+}
+
+.favorite-remove-form {
+    padding: 0 0.25rem;
+}
+
 .property-body {
     padding: 1.35rem 1.25rem 1.4rem;
     display: flex;
@@ -785,9 +881,16 @@ h4,
         gap: 0.5rem 0.85rem;
     }
 
-    .btn-property {
+    .property-card-actions > .btn-property,
+    .property-card-actions > .favorite-form-inline,
+    .property-card-actions > .favorite-guest-link {
+        flex: 1 1 100%;
+    }
+
+    .property-card-actions .btn-property,
+    .property-card-actions .favorite-form-inline .favorite-btn-inline,
+    .property-card-actions .favorite-guest-link {
         width: 100%;
-        text-align: center;
     }
 
     .ai-visual-card {

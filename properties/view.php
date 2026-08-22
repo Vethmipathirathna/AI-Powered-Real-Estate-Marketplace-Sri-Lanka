@@ -4,12 +4,15 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/_helpers.php';
+require_once __DIR__ . '/../buyer/_helpers.php';
 
 $propertyId = (int) ($_GET['id'] ?? 0);
 $property = null;
 $images = [];
 $notFound = false;
 $loadError = null;
+$favoritePropertyIds = [];
+$isFavorited = false;
 
 try {
     $pdo = db();
@@ -22,11 +25,18 @@ try {
             $notFound = true;
         } else {
             $images = marketplace_property_images($pdo, $propertyId);
+            $user = current_user();
+            if (buyer_is_buyer($user)) {
+                $favoritePropertyIds = buyer_favorite_property_ids($pdo, (int) ($user['user_id'] ?? 0));
+                $isFavorited = in_array($propertyId, $favoritePropertyIds, true);
+            }
         }
     }
 } catch (Throwable $e) {
     $loadError = 'Unable to load this property right now. Please try again later.';
 }
+
+$detailReturnPath = 'properties/view.php?id=' . max(0, $propertyId);
 
 $page_title = $notFound || $property === null
     ? 'Property Unavailable | RealEstateAI'
@@ -130,6 +140,18 @@ $page_description = $notFound || $property === null
                 </div>
 
                 <div class="col-lg-4">
+                    <?php if (buyer_is_buyer(current_user())): ?>
+                        <section class="summary-panel mb-4">
+                            <h2 class="summary-title">Favorites</h2>
+                            <?php
+                            $favoritePropertyId = $propertyId;
+                            $favoriteReturnPath = $detailReturnPath;
+                            $favoriteCompact = false;
+                            include __DIR__ . '/_favorite_button.php';
+                            ?>
+                        </section>
+                    <?php endif; ?>
+
                     <section class="summary-panel mb-4">
                         <h2 class="summary-title">Listed By</h2>
                         <p class="mb-1 fw-semibold"><?php echo e((string) ($property['lister_name'] ?? '')); ?></p>

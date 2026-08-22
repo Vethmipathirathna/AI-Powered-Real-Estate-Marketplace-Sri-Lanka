@@ -3,8 +3,10 @@ $user = current_user();
 $scriptName = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? ''));
 $isHome = str_ends_with($scriptName, '/index.php') && !preg_match('#/(auth|buyer|seller|admin|properties)/#', $scriptName);
 $isProperties = str_contains($scriptName, '/properties/');
+$isBuyerFavorites = str_contains($scriptName, '/buyer/favorites.php');
 $homeHref = url('index.php');
 $propertiesHref = url('properties/index.php');
+$isBuyer = $user !== null && strtoupper((string) ($user['role'] ?? '')) === 'BUYER';
 ?>
 <header class="site-header">
     <nav class="navbar navbar-expand-lg navbar-light" aria-label="Primary">
@@ -40,6 +42,11 @@ $propertiesHref = url('properties/index.php');
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo e($homeHref); ?>#contact">Contact</a>
                     </li>
+                    <?php if ($isBuyer): ?>
+                        <li class="nav-item">
+                            <a class="nav-link<?php echo $isBuyerFavorites ? ' active' : ''; ?>"<?php echo $isBuyerFavorites ? ' aria-current="page"' : ''; ?> href="<?php echo e(url('buyer/favorites.php')); ?>">My Favorites</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
                 <div class="nav-actions d-flex align-items-center gap-2">
                     <?php if ($user !== null): ?>
