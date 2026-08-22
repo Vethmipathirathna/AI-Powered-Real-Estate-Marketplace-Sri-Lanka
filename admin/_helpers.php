@@ -204,3 +204,112 @@ if (!function_exists('admin_build_query')) {
         return $filtered === [] ? '' : ('?' . http_build_query($filtered));
     }
 }
+
+if (!function_exists('admin_allowed_property_types')) {
+    /** @return list<string> */
+    function admin_allowed_property_types(): array
+    {
+        return ['HOUSE', 'APARTMENT', 'LAND', 'COMMERCIAL'];
+    }
+}
+
+if (!function_exists('admin_allowed_property_statuses')) {
+    /** @return list<string> */
+    function admin_allowed_property_statuses(): array
+    {
+        return ['AVAILABLE', 'PENDING', 'SOLD', 'INACTIVE'];
+    }
+}
+
+if (!function_exists('admin_property_status_badge_class')) {
+    function admin_property_status_badge_class(string $status): string
+    {
+        return match (strtoupper($status)) {
+            'AVAILABLE' => 'badge-prop-available',
+            'PENDING' => 'badge-prop-pending',
+            'SOLD' => 'badge-prop-sold',
+            default => 'badge-prop-inactive',
+        };
+    }
+}
+
+if (!function_exists('admin_format_lkr')) {
+    function admin_format_lkr($amount): string
+    {
+        return 'LKR ' . number_format((float) $amount, 2);
+    }
+}
+
+if (!function_exists('admin_yes_no')) {
+    function admin_yes_no($value): string
+    {
+        return ((int) $value) === 1 ? 'Yes' : 'No';
+    }
+}
+
+if (!function_exists('admin_image_url')) {
+    /**
+     * Build a public URL for a stored image path without exposing filesystem roots.
+     */
+    function admin_image_url(?string $path): ?string
+    {
+        if ($path === null) {
+            return null;
+        }
+
+        $path = trim($path);
+        if ($path === '') {
+            return null;
+        }
+
+        if (preg_match('#^https?://#i', $path) === 1) {
+            return $path;
+        }
+
+        return url(ltrim(str_replace('\\', '/', $path), '/'));
+    }
+}
+
+if (!function_exists('admin_find_property')) {
+    /**
+     * @return array<string, mixed>|null
+     */
+    function admin_find_property(PDO $pdo, int $propertyId): ?array
+    {
+        $stmt = $pdo->prepare(
+            'SELECT p.*,
+                    u.full_name AS lister_name,
+                    u.email AS lister_email,
+                    u.phone AS lister_phone,
+                    u.role AS lister_role,
+                    u.status AS lister_status
+             FROM properties p
+             INNER JOIN users u ON u.user_id = p.listed_by_user_id
+             WHERE p.property_id = ?
+             LIMIT 1'
+        );
+        $stmt->execute([$propertyId]);
+        $row = $stmt->fetch();
+
+        return is_array($row) ? $row : null;
+    }
+}
+
+if (!function_exists('admin_property_images')) {
+    /**
+     * @return list<array<string, mixed>>
+     */
+    function admin_property_images(PDO $pdo, int $propertyId): array
+    {
+        $stmt = $pdo->prepare(
+            'SELECT image_id, image_path, is_primary, created_at
+             FROM property_images
+             WHERE property_id = ?
+             ORDER BY is_primary DESC, image_id ASC'
+        );
+        $stmt->execute([$propertyId]);
+        $rows = $stmt->fetchAll();
+
+        return is_array($rows) ? $rows : [];
+    }
+}

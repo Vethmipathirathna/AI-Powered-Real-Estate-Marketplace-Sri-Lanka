@@ -53,12 +53,13 @@ CREATE TABLE `users` (
 
 -- -----------------------------------------------------------------------------
 -- Table: properties
--- Marketplace listings owned by seller users.
+-- Marketplace listings owned/listed by SELLER or ADMIN users.
+-- Ownership column: listed_by_user_id → users.user_id
 -- Includes attributes needed for listing display and future AI estimation.
 -- -----------------------------------------------------------------------------
 CREATE TABLE `properties` (
     `property_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `seller_id` INT UNSIGNED NOT NULL,
+    `listed_by_user_id` INT UNSIGNED NOT NULL,
     `title` VARCHAR(200) NOT NULL,
     `description` TEXT NULL,
     `district` VARCHAR(100) NOT NULL,
@@ -81,13 +82,13 @@ CREATE TABLE `properties` (
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`property_id`),
-    KEY `idx_properties_seller_id` (`seller_id`),
+    KEY `idx_properties_listed_by_user_id` (`listed_by_user_id`),
     KEY `idx_properties_district` (`district`),
     KEY `idx_properties_type` (`property_type`),
     KEY `idx_properties_status` (`status`),
     KEY `idx_properties_asking_price` (`asking_price_lkr`),
-    CONSTRAINT `fk_properties_seller`
-        FOREIGN KEY (`seller_id`) REFERENCES `users` (`user_id`)
+    CONSTRAINT `fk_properties_listed_by_user`
+        FOREIGN KEY (`listed_by_user_id`) REFERENCES `users` (`user_id`)
         ON DELETE RESTRICT
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -138,6 +139,7 @@ CREATE TABLE `favorites` (
 -- -----------------------------------------------------------------------------
 -- Table: messages
 -- User-to-user communication, optionally linked to a property listing.
+-- Buyers may contact the property lister (SELLER or ADMIN) via receiver_id.
 -- -----------------------------------------------------------------------------
 CREATE TABLE `messages` (
     `message_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,

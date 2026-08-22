@@ -71,9 +71,9 @@ try {
     $recentUsers = $usersStmt->fetchAll();
 
     $propertiesStmt = $pdo->query(
-        'SELECT p.title, p.district, p.asking_price_lkr, p.status, p.created_at, u.full_name AS seller_name
+        'SELECT p.title, p.district, p.asking_price_lkr, p.status, p.created_at, u.full_name AS lister_name
          FROM properties p
-         INNER JOIN users u ON u.user_id = p.seller_id
+         INNER JOIN users u ON u.user_id = p.listed_by_user_id
          ORDER BY p.created_at DESC, p.property_id DESC
          LIMIT 5'
     );
@@ -202,7 +202,7 @@ function admin_format_date(?string $datetime): string
             <section class="admin-section" aria-labelledby="shortcuts-heading">
                 <div class="admin-section-header">
                     <h2 id="shortcuts-heading" class="admin-section-title">Management Shortcuts</h2>
-                    <p class="admin-section-text">User management is available. Other modules coming soon.</p>
+                    <p class="admin-section-text">User and property management are available. AI records coming soon.</p>
                 </div>
                 <div class="row g-3">
                     <div class="col-md-4">
@@ -213,11 +213,11 @@ function admin_format_date(?string $datetime): string
                         </a>
                     </div>
                     <div class="col-md-4">
-                        <div class="shortcut-card">
+                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/properties.php')); ?>">
                             <h3 class="shortcut-title">Manage Properties</h3>
                             <p class="shortcut-text">Moderate listings and property publication status.</p>
-                            <span class="shortcut-badge">Coming soon</span>
-                        </div>
+                            <span class="shortcut-badge">Open module</span>
+                        </a>
                     </div>
                     <div class="col-md-4">
                         <div class="shortcut-card">
@@ -280,7 +280,7 @@ function admin_format_date(?string $datetime): string
                                 <thead>
                                     <tr>
                                         <th scope="col">Title</th>
-                                        <th scope="col">Seller</th>
+                                        <th scope="col">Listed By</th>
                                         <th scope="col">District</th>
                                         <th scope="col">Asking Price</th>
                                         <th scope="col">Status</th>
@@ -291,7 +291,7 @@ function admin_format_date(?string $datetime): string
                                     <?php foreach ($recentProperties as $property): ?>
                                         <tr>
                                             <td><?php echo e((string) ($property['title'] ?? '')); ?></td>
-                                            <td><?php echo e((string) ($property['seller_name'] ?? '')); ?></td>
+                                            <td><?php echo e((string) ($property['lister_name'] ?? '')); ?></td>
                                             <td><?php echo e((string) ($property['district'] ?? '')); ?></td>
                                             <td><?php echo e(admin_format_lkr($property['asking_price_lkr'] ?? 0)); ?></td>
                                             <td><span class="status-pill"><?php echo e((string) ($property['status'] ?? '')); ?></span></td>
