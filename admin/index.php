@@ -238,6 +238,13 @@ function admin_format_date(?string $datetime): string
                         </a>
                     </div>
                     <div class="col-md-6 col-xl">
+                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/reports.php')); ?>">
+                            <h3 class="shortcut-title">System Reports</h3>
+                            <p class="shortcut-text">View system usage summaries for users, listings, AI and messages.</p>
+                            <span class="shortcut-badge">Open reports</span>
+                        </a>
+                    </div>
+                    <div class="col-md-6 col-xl">
                         <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('ai/estimate.php')); ?>">
                             <h3 class="shortcut-title">AI Price Estimator</h3>
                             <p class="shortcut-text">Generate an AI-powered house price estimate for Sri Lankan properties.</p>

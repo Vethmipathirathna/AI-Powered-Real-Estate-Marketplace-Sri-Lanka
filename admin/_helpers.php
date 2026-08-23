@@ -313,3 +313,135 @@ if (!function_exists('admin_property_images')) {
         return is_array($rows) ? $rows : [];
     }
 }
+
+if (!function_exists('admin_parse_report_date')) {
+    /**
+     * Validate a YYYY-MM-DD date string.
+     * Returns the normalised date, null when empty, or false when invalid.
+     *
+     * @return string|null|false
+     */
+    function admin_parse_report_date(?string $value)
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $value = trim($value);
+        if ($value === '') {
+            return null;
+        }
+
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) !== 1) {
+            return false;
+        }
+
+        $dt = DateTime::createFromFormat('!Y-m-d', $value);
+        if ($dt === false || $dt->format('Y-m-d') !== $value) {
+            return false;
+        }
+
+        return $value;
+    }
+}
+
+if (!function_exists('admin_format_month_label')) {
+    function admin_format_month_label(string $yearMonth): string
+    {
+        $ts = strtotime($yearMonth . '-01');
+        return $ts === false ? $yearMonth : date('M Y', $ts);
+    }
+}
+
+if (!function_exists('admin_report_count_between')) {
+    /**
+     * Count rows in a table created within an inclusive date range.
+     * Pass null bounds for lifetime counts.
+     */
+    function admin_report_count_between(
+        PDO $pdo,
+        string $table,
+        ?string $fromDate,
+        ?string $toDate
+    ): int {
+        $allowed = ['users', 'properties', 'messages', 'ai_predictions'];
+        if (!in_array($table, $allowed, true)) {
+            return 0;
+        }
+
+        $where = [];
+        $params = [];
+
+        if ($fromDate !== null) {
+            $where[] = 'created_at >= ?';
+            $params[] = $fromDate . ' 00:00:00';
+        }
+        if ($toDate !== null) {
+            $where[] = 'created_at <= ?';
+            $params[] = $toDate . ' 23:59:59';
+        }
+
+        $sql = 'SELECT COUNT(*) FROM `' . $table . '`';
+        if ($where !== []) {
+            $sql .= ' WHERE ' . implode(' AND ', $where);
+        }
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn();
+    }
+}
+
+if (!function_exists('admin_report_monthly_counts')) {
+    /**
+     * @return list<array{month_key: string, total: int}>
+     */
+    function admin_report_monthly_counts(
+        PDO $pdo,
+        string $table,
+        ?string $fromDate,
+        ?string $toDate,
+        int $limit = 24
+    ): array {
+        $allowed = ['users', 'properties', 'messages', 'ai_predictions'];
+        if (!in_array($table, $allowed, true)) {
+            return [];
+        }
+
+        $limit = max(1, min(60, $limit));
+        $where = [];
+        $params = [];
+
+        if ($fromDate !== null) {
+            $where[] = 'created_at >= ?';
+            $params[] = $fromDate . ' 00:00:00';
+        }
+        if ($toDate !== null) {
+            $where[] = 'created_at <= ?';
+            $params[] = $toDate . ' 23:59:59';
+        }
+
+        $sql = 'SELECT DATE_FORMAT(created_at, \'%Y-%m\') AS month_key, COUNT(*) AS total
+                FROM `' . $table . '`';
+        if ($where !== []) {
+            $sql .= ' WHERE ' . implode(' AND ', $where);
+        }
+        $sql .= ' GROUP BY month_key ORDER BY month_key DESC LIMIT ' . $limit;
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll();
+        if (!is_array($rows)) {
+            return [];
+        }
+
+        $out = [];
+        foreach ($rows as $row) {
+            $out[] = [
+                'month_key' => (string) ($row['month_key'] ?? ''),
+                'total' => (int) ($row['total'] ?? 0),
+            ];
+        }
+        return $out;
+    }
+}

@@ -1081,6 +1081,14 @@ h4,
     line-height: 1.1;
 }
 
+.stat-subtext {
+    display: block;
+    margin-top: 0.45rem;
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    line-height: 1.35;
+}
+
 .summary-panel,
 .shortcut-card,
 .table-panel {
@@ -1696,5 +1704,293 @@ h4,
 
     .property-card:hover {
         transform: none;
+    }
+}
+
+/* Dedicated printable System Usage Report document */
+.report-document-body {
+    margin: 0;
+    background: #e8ebe9;
+    color: #111;
+    font-family: var(--font-body, "Source Sans 3", sans-serif);
+}
+
+.print-actions {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    justify-content: flex-end;
+    padding: 0.85rem 1.25rem;
+    background: #fff;
+    border-bottom: 1px solid #ccd2cf;
+}
+
+.report-document {
+    width: min(210mm, calc(100% - 2rem));
+    margin: 1.25rem auto 2rem;
+    padding: 18mm 16mm;
+    background: #fff;
+    color: #111;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+}
+
+.report-document-header {
+    margin-bottom: 1.35rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 2px solid #222;
+}
+
+.report-document-brand {
+    margin: 0 0 0.2rem;
+    font-family: var(--font-display, Fraunces, Georgia, serif);
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.report-document-title {
+    margin: 0 0 0.75rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.report-document-meta {
+    margin: 0.2rem 0 0;
+    font-size: 0.95rem;
+    color: #222;
+}
+
+.report-document-meta span {
+    font-weight: 600;
+}
+
+.report-document .admin-section {
+    margin-bottom: 1.15rem;
+}
+
+.report-document .admin-section-title {
+    font-size: 1.05rem;
+    color: #111;
+}
+
+.report-document .admin-section-text,
+.report-document .stat-label,
+.report-document .stat-subtext,
+.report-document .text-muted,
+.report-document .empty-state {
+    color: #333;
+}
+
+.report-document .stat-card,
+.report-document .summary-panel,
+.report-document .table-panel {
+    background: #fff;
+    border: 1px solid #c9d0cd;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.report-document .stat-value,
+.report-document .summary-title {
+    color: #111;
+}
+
+.report-document .admin-table th,
+.report-document .admin-table td {
+    border-color: #cfd5d2;
+    color: #111;
+    background: #fff;
+}
+
+.report-document-footer {
+    margin-top: 1.5rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid #999;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.print-only {
+    display: none !important;
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 12mm 14mm;
+    }
+
+    .print-actions,
+    .print-actions * {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        max-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        overflow: hidden !important;
+    }
+
+    .skip-link,
+    .site-header,
+    .site-footer,
+    .no-print,
+    .admin-breadcrumb,
+    .navbar,
+    .nav-actions {
+        display: none !important;
+    }
+
+    html,
+    body,
+    .report-document-body {
+        background: #fff !important;
+        color: #111 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 11pt !important;
+        line-height: 1.35 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .report-document {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    .report-document-header {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 0.9rem;
+        padding-bottom: 0.55rem;
+        border-bottom: 1.5pt solid #222;
+    }
+
+    .report-document-brand { font-size: 16pt; }
+    .report-document-title { font-size: 12pt; }
+    .report-document-meta { font-size: 10pt; }
+
+    .report-document-footer {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        font-size: 9pt;
+    }
+
+    .admin-section,
+    .report-section {
+        margin: 0 0 0.85rem 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    .admin-section-header {
+        margin-bottom: 0.4rem;
+        break-after: avoid;
+        page-break-after: avoid;
+    }
+
+    .admin-section-title,
+    .summary-title {
+        color: #111 !important;
+        font-size: 12pt !important;
+    }
+
+    .admin-section-text,
+    .stat-label,
+    .stat-subtext,
+    .text-muted,
+    .empty-state {
+        color: #333 !important;
+        font-size: 9.5pt !important;
+    }
+
+    .stat-card,
+    .summary-panel {
+        background: #fff !important;
+        border: 0.75pt solid #bbb !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        padding: 0.5rem 0.6rem !important;
+    }
+
+    .table-panel {
+        background: #fff !important;
+        border: 0.75pt solid #bbb !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        padding: 0.5rem 0.6rem !important;
+    }
+
+    .stat-value {
+        color: #111 !important;
+        font-size: 13pt !important;
+    }
+
+    .summary-list li {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .table-responsive {
+        overflow: visible !important;
+        width: 100% !important;
+    }
+
+    .admin-table,
+    table {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: 9.5pt !important;
+    }
+
+    .admin-table thead,
+    table thead {
+        display: table-header-group;
+    }
+
+    .admin-table th,
+    .admin-table td,
+    table th,
+    table td {
+        border: 0.5pt solid #ccc !important;
+        padding: 0.25rem 0.35rem !important;
+        color: #111 !important;
+        background: #fff !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .admin-table tr,
+    table tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    a {
+        color: #111 !important;
+        text-decoration: none !important;
+    }
+
+    a[href]::after {
+        content: none !important;
     }
 }

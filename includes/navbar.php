@@ -11,6 +11,7 @@ $isAiEstimator = str_contains($scriptName, '/ai/estimate.php');
 $isAiHistory = str_contains($scriptName, '/ai/history.php');
 $isAdminPredictions = str_contains($scriptName, '/admin/predictions.php')
     || str_contains($scriptName, '/admin/prediction_view.php');
+$isAdminReports = str_contains($scriptName, '/admin/reports.php');
 $homeHref = url('index.php');
 $propertiesHref = url('properties/index.php');
 $isBuyer = $user !== null && strtoupper((string) ($user['role'] ?? '')) === 'BUYER';
@@ -73,6 +74,9 @@ $aiEstimatorHref = $canUseAiEstimator ? url('ai/estimate.php') : url('auth/login
                     <?php if ($isAdmin): ?>
                         <li class="nav-item">
                             <a class="nav-link<?php echo $isAdminPredictions ? ' active' : ''; ?>"<?php echo $isAdminPredictions ? ' aria-current="page"' : ''; ?> href="<?php echo e(url('admin/predictions.php')); ?>">AI Predictions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link<?php echo $isAdminReports ? ' active' : ''; ?>"<?php echo $isAdminReports ? ' aria-current="page"' : ''; ?> href="<?php echo e(url('admin/reports.php')); ?>">Reports</a>
                         </li>
                     <?php endif; ?>
                     <?php if ($messagesHref !== null): ?>
