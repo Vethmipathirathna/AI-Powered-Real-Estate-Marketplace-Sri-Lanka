@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/messaging.php';
+require_once __DIR__ . '/../includes/support_messaging.php';
 
 require_role('ADMIN');
 
@@ -27,6 +28,7 @@ $stats = [
 $recentUsers = [];
 $recentProperties = [];
 $ownListingUnread = 0;
+$supportUnread = 0;
 $loadError = null;
 
 try {
@@ -81,6 +83,7 @@ try {
     );
     $recentProperties = $propertiesStmt->fetchAll();
     $ownListingUnread = message_unread_count($pdo, (int) ($user['user_id'] ?? 0), 'ADMIN');
+    $supportUnread = support_unread_count_for_admin($pdo, (int) ($user['user_id'] ?? 0));
 } catch (Throwable $e) {
     $loadError = 'Unable to load dashboard data right now. Please try again later.';
 }
@@ -228,6 +231,13 @@ function admin_format_date(?string $datetime): string
                             <h3 class="shortcut-title">My Listing Messages</h3>
                             <p class="shortcut-text">Private buyer conversations for properties you listed — not other listers' inboxes.</p>
                             <span class="shortcut-badge"><?php echo $ownListingUnread > 0 ? e((string) $ownListingUnread) . ' unread' : 'Open inbox'; ?></span>
+                        </a>
+                    </div>
+                    <div class="col-md-6 col-xl">
+                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/support.php')); ?>">
+                            <h3 class="shortcut-title">Support Inbox</h3>
+                            <p class="shortcut-text">View and reply to buyer and seller support inquiries assigned to you.</p>
+                            <span class="shortcut-badge"><?php echo $supportUnread > 0 ? e((string) $supportUnread) . ' unread' : 'Open support'; ?></span>
                         </a>
                     </div>
                     <div class="col-md-6 col-xl">

@@ -6,12 +6,21 @@ $isProperties = str_contains($scriptName, '/properties/');
 $isBuyerFavorites = str_contains($scriptName, '/buyer/favorites.php');
 $isMessagesPage = preg_match('#/(buyer|seller)/messages\.php$#', $scriptName) === 1
     || str_contains($scriptName, '/admin/messages.php')
-    || str_contains($scriptName, '/conversation.php');
+    || (
+        (str_contains($scriptName, '/buyer/conversation.php')
+            || str_contains($scriptName, '/seller/conversation.php')
+            || str_contains($scriptName, '/admin/conversation.php'))
+        && !str_contains($scriptName, '/support_conversation.php')
+    );
 $isAiEstimator = str_contains($scriptName, '/ai/estimate.php');
 $isAiHistory = str_contains($scriptName, '/ai/history.php');
 $isAdminPredictions = str_contains($scriptName, '/admin/predictions.php')
     || str_contains($scriptName, '/admin/prediction_view.php');
 $isAdminReports = str_contains($scriptName, '/admin/reports.php');
+$isSupportPage = str_contains($scriptName, '/support/')
+    || str_contains($scriptName, '/admin/support.php')
+    || str_contains($scriptName, '/admin/support_conversation.php');
+$isSeller = $user !== null && strtoupper((string) ($user['role'] ?? '')) === 'SELLER';
 $homeHref = url('index.php');
 $propertiesHref = url('properties/index.php');
 $isBuyer = $user !== null && strtoupper((string) ($user['role'] ?? '')) === 'BUYER';
@@ -26,6 +35,7 @@ $messagesHref = match ($userRole) {
 $messagesLabel = $userRole === 'ADMIN' ? 'My Messages' : 'Messages';
 $canUseAiEstimator = $user !== null && in_array($userRole, ['BUYER', 'SELLER', 'ADMIN'], true);
 $aiEstimatorHref = $canUseAiEstimator ? url('ai/estimate.php') : url('auth/login.php');
+$canContactSupport = $isBuyer || $isSeller;
 ?>
 <header class="site-header">
     <nav class="navbar navbar-expand-lg navbar-light" aria-label="Primary">
@@ -77,6 +87,14 @@ $aiEstimatorHref = $canUseAiEstimator ? url('ai/estimate.php') : url('auth/login
                         </li>
                         <li class="nav-item">
                             <a class="nav-link<?php echo $isAdminReports ? ' active' : ''; ?>"<?php echo $isAdminReports ? ' aria-current="page"' : ''; ?> href="<?php echo e(url('admin/reports.php')); ?>">Reports</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link<?php echo $isSupportPage ? ' active' : ''; ?>"<?php echo $isSupportPage ? ' aria-current="page"' : ''; ?> href="<?php echo e(url('admin/support.php')); ?>">Support Inbox</a>
+                        </li>
+                    <?php endif; ?>
+                    <?php if ($canContactSupport): ?>
+                        <li class="nav-item">
+                            <a class="nav-link<?php echo $isSupportPage ? ' active' : ''; ?>"<?php echo $isSupportPage ? ' aria-current="page"' : ''; ?> href="<?php echo e(url('support/index.php')); ?>">Help</a>
                         </li>
                     <?php endif; ?>
                     <?php if ($messagesHref !== null): ?>

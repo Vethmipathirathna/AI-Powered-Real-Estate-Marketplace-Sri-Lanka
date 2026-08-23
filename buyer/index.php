@@ -6,6 +6,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../properties/_helpers.php';
 require_once __DIR__ . '/_helpers.php';
 require_once __DIR__ . '/../includes/messaging.php';
+require_once __DIR__ . '/../includes/support_messaging.php';
 
 require_role('BUYER');
 
@@ -15,6 +16,7 @@ $flash = flash_get();
 $availableCount = null;
 $favoritesCount = null;
 $unreadMessages = null;
+$unreadSupport = 0;
 $loadError = null;
 
 try {
@@ -22,6 +24,7 @@ try {
     $availableCount = marketplace_count_available($pdo);
     $favoritesCount = buyer_count_available_favorites($pdo, $userId);
     $unreadMessages = message_unread_count($pdo, $userId, 'BUYER');
+    $unreadSupport = support_unread_count_for_user($pdo, $userId);
 } catch (Throwable $e) {
     $loadError = 'Unable to load marketplace stats right now.';
 }
@@ -105,6 +108,15 @@ $page_description = 'Your RealEstateAI buyer dashboard.';
                         <p class="shortcut-text">Contact property listers and follow up on your conversations.</p>
                         <span class="shortcut-badge">
                             <?php echo ($unreadMessages ?? 0) > 0 ? e((string) $unreadMessages) . ' unread' : 'Open inbox'; ?>
+                        </span>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('support/index.php')); ?>">
+                        <h3 class="shortcut-title">Help / Contact Admin</h3>
+                        <p class="shortcut-text">Send a private support inquiry to RealEstateAI Admin.</p>
+                        <span class="shortcut-badge">
+                            <?php echo $unreadSupport > 0 ? e((string) $unreadSupport) . ' unread' : 'Open support'; ?>
                         </span>
                     </a>
                 </div>

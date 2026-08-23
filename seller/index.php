@@ -5,6 +5,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/_helpers.php';
 require_once __DIR__ . '/../includes/messaging.php';
+require_once __DIR__ . '/../includes/support_messaging.php';
 
 require_role('SELLER');
 
@@ -22,6 +23,7 @@ $stats = [
     'inactive' => 0,
 ];
 $unreadMessages = 0;
+$unreadSupport = 0;
 $loadError = null;
 
 try {
@@ -48,6 +50,7 @@ try {
         }
     }
     $unreadMessages = message_unread_count($pdo, $userId, 'SELLER');
+    $unreadSupport = support_unread_count_for_user($pdo, $userId);
 } catch (Throwable $e) {
     $loadError = 'Unable to load your listing statistics right now.';
 }
@@ -126,6 +129,13 @@ try {
                             <h3 class="shortcut-title">Messages</h3>
                             <p class="shortcut-text">Read and reply to buyer inquiries for your listings.</p>
                             <span class="shortcut-badge"><?php echo $unreadMessages > 0 ? e((string) $unreadMessages) . ' unread' : 'Open inbox'; ?></span>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('support/index.php')); ?>">
+                            <h3 class="shortcut-title">Help / Contact Admin</h3>
+                            <p class="shortcut-text">Send a private support inquiry to RealEstateAI Admin.</p>
+                            <span class="shortcut-badge"><?php echo $unreadSupport > 0 ? e((string) $unreadSupport) . ' unread' : 'Open support'; ?></span>
                         </a>
                     </div>
                     <div class="col-md-4">
