@@ -33,7 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'model_version' => (string) ($apiResult['model_version'] ?? 'rf_100_depth20_v1'),
                 ]);
             } catch (Throwable $e) {
-                $errors[] = 'Your estimate was generated but could not be saved to history right now.';
+                // Prediction succeeded; only history persist failed. Survive PRG via flash.
+                flash_set(
+                    'warning',
+                    'Your estimate was calculated successfully, but it could not be saved to Prediction History.'
+                );
             }
 
             ai_store_result_flash([
@@ -83,7 +87,14 @@ $page_description = 'AI-powered house price estimate for Sri Lankan properties.'
         </div>
 
         <?php if ($flash !== null): ?>
-            <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : 'danger'; ?>" role="alert">
+            <?php
+            $flashAlertClass = match ((string) ($flash['type'] ?? '')) {
+                'success' => 'success',
+                'warning' => 'warning',
+                default => 'danger',
+            };
+            ?>
+            <div class="alert alert-<?php echo e($flashAlertClass); ?>" role="alert">
                 <?php echo e($flash['message']); ?>
             </div>
         <?php endif; ?>

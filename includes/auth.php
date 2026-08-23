@@ -228,13 +228,106 @@ if (!function_exists('logout_user')) {
     }
 }
 
+if (!function_exists('auth_clear_login_session')) {
+    /**
+     * Drop trusted identity keys without destroying the whole session
+     * (flash / CSRF can still be set for the login redirect).
+     */
+    function auth_clear_login_session(): void
+    {
+        start_app_session();
+        unset($_SESSION['user_id'], $_SESSION['full_name'], $_SESSION['role']);
+    }
+}
+
+if (!function_exists('auth_refresh_session_user')) {
+    /**
+     * Re-check the session user against `users` once per request.
+     * On success, refreshes full_name and role from the database.
+     *
+     * @return 'ok'|'inactive'|'error'
+     */
+    function auth_refresh_session_user(): string
+    {
+        static $done = false;
+        static $result = 'error';
+
+        if ($done) {
+            return $result;
+        }
+        $done = true;
+
+        start_app_session();
+        $userId = (int) ($_SESSION['user_id'] ?? 0);
+        if ($userId <= 0) {
+            auth_clear_login_session();
+            $result = 'inactive';
+            return $result;
+        }
+
+        try {
+            if (!function_exists('db')) {
+                require_once __DIR__ . '/../config/database.php';
+            }
+
+            $stmt = db()->prepare(
+                'SELECT user_id, full_name, role, status
+                 FROM users
+                 WHERE user_id = ?
+                 LIMIT 1'
+            );
+            $stmt->execute([$userId]);
+            $row = $stmt->fetch();
+        } catch (Throwable $e) {
+            auth_clear_login_session();
+            $result = 'error';
+            return $result;
+        }
+
+        if (
+            !is_array($row)
+            || strtoupper((string) ($row['status'] ?? '')) !== 'ACTIVE'
+        ) {
+            auth_clear_login_session();
+            $result = 'inactive';
+            return $result;
+        }
+
+        $_SESSION['user_id'] = (int) $row['user_id'];
+        $_SESSION['full_name'] = (string) $row['full_name'];
+        $_SESSION['role'] = strtoupper((string) $row['role']);
+        $result = 'ok';
+
+        return $result;
+    }
+}
+
 if (!function_exists('require_login')) {
     function require_login(): void
     {
-        if (!is_logged_in()) {
+        start_app_session();
+
+        if (
+            empty($_SESSION['user_id'])
+            || empty($_SESSION['full_name'])
+            || empty($_SESSION['role'])
+        ) {
             flash_set('error', 'Please log in to continue.');
             redirect('auth/login.php');
         }
+
+        $status = auth_refresh_session_user();
+        if ($status === 'ok') {
+            return;
+        }
+
+        if ($status === 'inactive') {
+            flash_set('error', 'Your account is inactive. Please contact support.');
+        } else {
+            flash_set('error', 'Please log in to continue.');
+        }
+
+        redirect('auth/login.php');
     }
 }
 
