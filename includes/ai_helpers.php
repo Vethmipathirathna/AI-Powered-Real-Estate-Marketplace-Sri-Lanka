@@ -351,6 +351,36 @@ if (!function_exists('ai_fetch_user_prediction')) {
     }
 }
 
+if (!function_exists('ai_admin_fetch_prediction')) {
+    /**
+     * Admin-only: fetch any prediction by primary key with user identification.
+     * Does not filter by the viewing admin's user_id.
+     * Intentionally omits model_version and password fields.
+     *
+     * @return array<string, mixed>|null
+     */
+    function ai_admin_fetch_prediction(PDO $pdo, int $predictionId): ?array
+    {
+        if ($predictionId <= 0) {
+            return null;
+        }
+
+        $stmt = $pdo->prepare(
+            'SELECT p.prediction_id, p.user_id, p.district, p.area, p.perch, p.bedrooms, p.bathrooms,
+                    p.kitchen_area_sqft, p.parking_spots, p.has_garden, p.has_ac, p.water_supply,
+                    p.electricity, p.floors, p.year_built, p.predicted_price_lkr, p.created_at,
+                    u.full_name AS user_full_name, u.email AS user_email
+             FROM ai_predictions p
+             INNER JOIN users u ON u.user_id = p.user_id
+             WHERE p.prediction_id = ?
+             LIMIT 1'
+        );
+        $stmt->execute([$predictionId]);
+        $row = $stmt->fetch();
+        return is_array($row) ? $row : null;
+    }
+}
+
 if (!function_exists('ai_format_prediction_datetime')) {
     function ai_format_prediction_datetime(?string $datetime): string
     {

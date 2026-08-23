@@ -167,6 +167,7 @@ function admin_format_date(?string $datetime): string
                         <div class="stat-card">
                             <span class="stat-label">AI Predictions</span>
                             <strong class="stat-value"><?php echo e((string) $stats['ai_predictions']); ?></strong>
+                            <a class="btn btn-sm btn-outline-secondary mt-2" href="<?php echo e(url('admin/predictions.php')); ?>">View AI Predictions</a>
                         </div>
                     </div>
                 </div>
@@ -205,31 +206,38 @@ function admin_format_date(?string $datetime): string
             <section class="admin-section" aria-labelledby="shortcuts-heading">
                 <div class="admin-section-header">
                     <h2 id="shortcuts-heading" class="admin-section-title">Management Shortcuts</h2>
-                    <p class="admin-section-text">User and property management are available. AI records coming soon.</p>
+                    <p class="admin-section-text">User, property and AI prediction monitoring tools.</p>
                 </div>
                 <div class="row g-3">
-                    <div class="col-md-3">
+                    <div class="col-md-6 col-xl">
                         <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/users.php')); ?>">
                             <h3 class="shortcut-title">Manage Users</h3>
                             <p class="shortcut-text">Review and manage buyer, seller and admin accounts.</p>
                             <span class="shortcut-badge">Open module</span>
                         </a>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6 col-xl">
                         <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/properties.php')); ?>">
                             <h3 class="shortcut-title">Manage Properties</h3>
                             <p class="shortcut-text">Moderate listings and property publication status.</p>
                             <span class="shortcut-badge">Open module</span>
                         </a>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6 col-xl">
                         <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/messages.php')); ?>">
                             <h3 class="shortcut-title">My Listing Messages</h3>
                             <p class="shortcut-text">Private buyer conversations for properties you listed — not other listers' inboxes.</p>
                             <span class="shortcut-badge"><?php echo $ownListingUnread > 0 ? e((string) $ownListingUnread) . ' unread' : 'Open inbox'; ?></span>
                         </a>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6 col-xl">
+                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/predictions.php')); ?>">
+                            <h3 class="shortcut-title">AI Predictions</h3>
+                            <p class="shortcut-text">Monitor house-price estimates recorded by all users.</p>
+                            <span class="shortcut-badge">View AI Predictions</span>
+                        </a>
+                    </div>
+                    <div class="col-md-6 col-xl">
                         <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('ai/estimate.php')); ?>">
                             <h3 class="shortcut-title">AI Price Estimator</h3>
                             <p class="shortcut-text">Generate an AI-powered house price estimate for Sri Lankan properties.</p>
