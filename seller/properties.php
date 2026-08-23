@@ -122,7 +122,7 @@ try {
                                         <td>
                                             <div class="property-cell">
                                                 <?php if ($thumb !== null): ?>
-                                                    <img class="property-thumb" src="<?php echo e($thumb); ?>" alt="" width="56" height="42" loading="lazy">
+                                                    <img class="property-thumb" src="<?php echo e($thumb); ?>" alt="<?php echo e((string) ($row['title'] ?? 'Property')); ?>" width="56" height="42" loading="lazy">
                                                 <?php else: ?>
                                                     <div class="property-thumb property-thumb-placeholder" aria-hidden="true">No image</div>
                                                 <?php endif; ?>

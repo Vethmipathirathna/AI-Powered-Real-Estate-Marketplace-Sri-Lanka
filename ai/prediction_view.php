@@ -72,6 +72,9 @@ $page_description = 'View details of a saved AI house price estimate.';
                 <h2 id="prediction-value-heading" class="ai-result-price mb-0">
                     <?php echo e(admin_format_lkr($prediction['predicted_price_lkr'] ?? 0)); ?>
                 </h2>
+                <p class="ai-disclaimer mt-3 mb-0">
+                    Please note: This estimated value is for informational purposes only. The actual market value may vary depending on property condition, exact location, market demand, and other factors.
+                </p>
             </section>
 
             <section class="summary-panel">

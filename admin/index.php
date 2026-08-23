@@ -211,51 +211,51 @@ function admin_format_date(?string $datetime): string
                     <h2 id="shortcuts-heading" class="admin-section-title">Management Shortcuts</h2>
                     <p class="admin-section-text">User, property and AI prediction monitoring tools.</p>
                 </div>
-                <div class="row g-3">
-                    <div class="col-md-6 col-xl">
-                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/users.php')); ?>">
+                <div class="row g-3 admin-shortcuts-grid">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('admin/users.php')); ?>">
                             <h3 class="shortcut-title">Manage Users</h3>
                             <p class="shortcut-text">Review and manage buyer, seller and admin accounts.</p>
                             <span class="shortcut-badge">Open module</span>
                         </a>
                     </div>
-                    <div class="col-md-6 col-xl">
-                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/properties.php')); ?>">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('admin/properties.php')); ?>">
                             <h3 class="shortcut-title">Manage Properties</h3>
                             <p class="shortcut-text">Moderate listings and property publication status.</p>
                             <span class="shortcut-badge">Open module</span>
                         </a>
                     </div>
-                    <div class="col-md-6 col-xl">
-                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/messages.php')); ?>">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('admin/messages.php')); ?>">
                             <h3 class="shortcut-title">My Listing Messages</h3>
                             <p class="shortcut-text">Private buyer conversations for properties you listed — not other listers' inboxes.</p>
                             <span class="shortcut-badge"><?php echo $ownListingUnread > 0 ? e((string) $ownListingUnread) . ' unread' : 'Open inbox'; ?></span>
                         </a>
                     </div>
-                    <div class="col-md-6 col-xl">
-                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/support.php')); ?>">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('admin/support.php')); ?>">
                             <h3 class="shortcut-title">Support Inbox</h3>
                             <p class="shortcut-text">View and reply to buyer and seller support inquiries assigned to you.</p>
                             <span class="shortcut-badge"><?php echo $supportUnread > 0 ? e((string) $supportUnread) . ' unread' : 'Open support'; ?></span>
                         </a>
                     </div>
-                    <div class="col-md-6 col-xl">
-                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/predictions.php')); ?>">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('admin/predictions.php')); ?>">
                             <h3 class="shortcut-title">AI Predictions</h3>
                             <p class="shortcut-text">Monitor house-price estimates recorded by all users.</p>
                             <span class="shortcut-badge">View AI Predictions</span>
                         </a>
                     </div>
-                    <div class="col-md-6 col-xl">
-                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('admin/reports.php')); ?>">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('admin/reports.php')); ?>">
                             <h3 class="shortcut-title">System Reports</h3>
                             <p class="shortcut-text">View system usage summaries for users, listings, AI and messages.</p>
                             <span class="shortcut-badge">Open reports</span>
                         </a>
                     </div>
-                    <div class="col-md-6 col-xl">
-                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('ai/estimate.php')); ?>">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('ai/estimate.php')); ?>">
                             <h3 class="shortcut-title">AI Price Estimator</h3>
                             <p class="shortcut-text">Generate an AI-powered house price estimate for Sri Lankan properties.</p>
                             <span class="shortcut-badge">Get estimate</span>

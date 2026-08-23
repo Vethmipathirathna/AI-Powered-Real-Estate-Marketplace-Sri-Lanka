@@ -236,14 +236,9 @@ $page_description = 'AI-powered house price estimate for Sri Lankan properties.'
             </div>
             <div class="col-lg-5">
                 <section class="summary-panel h-100">
-                    <h2 class="summary-title">How it works</h2>
-                    <p class="mb-3">Enter your property characteristics and receive an instant AI-generated price estimate trained on Sri Lankan house market data.</p>
-                    <ul class="summary-list list-unstyled mb-4">
-                        <li><span>Model</span><strong>Random Forest</strong></li>
-                        <li><span>Typical accuracy</span><strong>High (R² ≈ 0.96)</strong></li>
-                        <li><span>Typical error</span><strong>≈ LKR 1.78M MAE</strong></li>
-                    </ul>
-                    <p class="ai-disclaimer mb-0">This tool provides an informational estimate only. It is not a professional valuation, legal appraisal, or guaranteed sale price.</p>
+                    <h2 class="summary-title">About This Estimate</h2>
+                    <p class="mb-3">Enter the property details to receive an estimated property value based on the information provided.</p>
+                    <p class="ai-disclaimer mb-0">Please note: The estimated value is for informational purposes only. The actual market value may vary depending on property condition, exact location, market demand, and other factors.</p>
                 </section>
             </div>
         </div>

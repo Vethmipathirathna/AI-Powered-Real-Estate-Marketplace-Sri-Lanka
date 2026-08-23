@@ -429,7 +429,7 @@ $page_description = 'Edit your Admin-owned RealEstateAI property listing.';
                             ?>
                             <figure class="property-gallery-item<?php echo $isPrimary ? ' is-primary' : ''; ?>">
                                 <?php if ($imgUrl !== null): ?>
-                                    <img src="<?php echo e($imgUrl); ?>" alt="" loading="lazy" width="800" height="600">
+                                    <img src="<?php echo e($imgUrl); ?>" alt="<?php echo e($isPrimary ? 'Primary property image' : 'Property gallery image'); ?>" loading="lazy" width="800" height="600">
                                 <?php endif; ?>
                                 <?php if ($isPrimary): ?>
                                     <figcaption>Primary</figcaption>

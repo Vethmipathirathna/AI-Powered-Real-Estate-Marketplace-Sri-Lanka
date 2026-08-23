@@ -92,7 +92,7 @@ $page_description = $notFound || $property === null
                                     ?>
                                     <figure class="property-gallery-item<?php echo $isPrimary ? ' is-primary' : ''; ?>">
                                         <?php if ($imgUrl !== null): ?>
-                                            <img src="<?php echo e($imgUrl); ?>" alt="<?php echo e($isPrimary ? 'Primary property image' : 'Property image'); ?>" width="800" height="600" loading="lazy">
+                                            <img src="<?php echo e($imgUrl); ?>" alt="<?php echo e(($isPrimary ? 'Primary image: ' : 'Image: ') . (string) ($property['title'] ?? 'Property')); ?>" width="800" height="600" loading="lazy">
                                         <?php else: ?>
                                             <div class="property-thumb-placeholder gallery-placeholder">Unavailable</div>
                                         <?php endif; ?>
@@ -155,7 +155,17 @@ $page_description = $notFound || $property === null
                     <section class="summary-panel mb-4">
                         <h2 class="summary-title">Listed By</h2>
                         <p class="mb-1 fw-semibold"><?php echo e((string) ($property['lister_name'] ?? '')); ?></p>
-                        <p class="mb-0 text-muted">Role: <?php echo e((string) ($property['lister_role'] ?? '')); ?></p>
+                        <?php
+                        $listerRoleLabel = match (strtoupper((string) ($property['lister_role'] ?? ''))) {
+                            'SELLER' => 'Seller',
+                            'ADMIN' => 'Admin',
+                            'BUYER' => 'Buyer',
+                            default => (string) ($property['lister_role'] ?? ''),
+                        };
+                        ?>
+                        <?php if ($listerRoleLabel !== ''): ?>
+                            <p class="mb-0 text-muted"><?php echo e($listerRoleLabel); ?></p>
+                        <?php endif; ?>
                     </section>
 
                     <?php

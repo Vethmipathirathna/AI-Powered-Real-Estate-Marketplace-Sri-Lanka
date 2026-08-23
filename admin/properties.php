@@ -245,7 +245,7 @@ $queryBase = [
                                             <td>
                                                 <div class="property-cell">
                                                     <?php if ($thumb !== null): ?>
-                                                        <img class="property-thumb" src="<?php echo e($thumb); ?>" alt="" width="56" height="42" loading="lazy">
+                                                        <img class="property-thumb" src="<?php echo e($thumb); ?>" alt="<?php echo e((string) ($row['title'] ?? 'Property')); ?>" width="56" height="42" loading="lazy">
                                                     <?php else: ?>
                                                         <div class="property-thumb property-thumb-placeholder" aria-hidden="true">No image</div>
                                                     <?php endif; ?>
@@ -263,27 +263,31 @@ $queryBase = [
                                             <td><span class="status-pill <?php echo e(admin_property_status_badge_class($rowStatus)); ?>"><?php echo e($rowStatus); ?></span></td>
                                             <td><?php echo e(admin_format_joined($row['created_at'] ?? null)); ?></td>
                                             <td>
-                                                <div class="action-stack">
-                                                    <a class="btn btn-sm btn-outline-secondary" href="<?php echo e(url('admin/property_view.php?id=' . $rowId)); ?>">View</a>
+                                                <div class="admin-property-actions">
                                                     <?php if ($isOwnListing): ?>
-                                                        <a class="btn btn-sm btn-outline-secondary" href="<?php echo e(url('admin/property_edit.php?id=' . $rowId)); ?>">Edit</a>
+                                                        <div class="admin-property-actions-edit-line">
+                                                            <a class="btn btn-sm btn-outline-secondary" href="<?php echo e(url('admin/property_edit.php?id=' . $rowId)); ?>">Edit</a>
+                                                        </div>
                                                     <?php endif; ?>
-                                                    <form method="post" action="" class="status-inline-form">
-                                                        <?php echo csrf_field(); ?>
-                                                        <input type="hidden" name="action" value="update_status">
-                                                        <input type="hidden" name="property_id" value="<?php echo e((string) $rowId); ?>">
-                                                        <?php if ($search !== ''): ?><input type="hidden" name="q" value="<?php echo e($search); ?>"><?php endif; ?>
-                                                        <?php if ($typeFilter !== 'ALL'): ?><input type="hidden" name="type" value="<?php echo e($typeFilter); ?>"><?php endif; ?>
-                                                        <?php if ($statusFilter !== 'ALL'): ?><input type="hidden" name="status_filter" value="<?php echo e($statusFilter); ?>"><?php endif; ?>
-                                                        <?php if ($page > 1): ?><input type="hidden" name="page" value="<?php echo e((string) $page); ?>"><?php endif; ?>
-                                                        <label class="visually-hidden" for="status-<?php echo e((string) $rowId); ?>">Change status</label>
-                                                        <select class="form-select form-select-sm" id="status-<?php echo e((string) $rowId); ?>" name="new_status">
-                                                            <?php foreach (admin_allowed_property_statuses() as $status): ?>
-                                                                <option value="<?php echo e($status); ?>"<?php echo $rowStatus === $status ? ' selected' : ''; ?>><?php echo e($status); ?></option>
-                                                            <?php endforeach; ?>
-                                                        </select>
-                                                        <button type="submit" class="btn btn-sm btn-auth">Update</button>
-                                                    </form>
+                                                    <div class="admin-property-actions-row">
+                                                        <a class="btn btn-sm btn-outline-secondary" href="<?php echo e(url('admin/property_view.php?id=' . $rowId)); ?>">View</a>
+                                                        <form method="post" action="" class="status-inline-form">
+                                                            <?php echo csrf_field(); ?>
+                                                            <input type="hidden" name="action" value="update_status">
+                                                            <input type="hidden" name="property_id" value="<?php echo e((string) $rowId); ?>">
+                                                            <?php if ($search !== ''): ?><input type="hidden" name="q" value="<?php echo e($search); ?>"><?php endif; ?>
+                                                            <?php if ($typeFilter !== 'ALL'): ?><input type="hidden" name="type" value="<?php echo e($typeFilter); ?>"><?php endif; ?>
+                                                            <?php if ($statusFilter !== 'ALL'): ?><input type="hidden" name="status_filter" value="<?php echo e($statusFilter); ?>"><?php endif; ?>
+                                                            <?php if ($page > 1): ?><input type="hidden" name="page" value="<?php echo e((string) $page); ?>"><?php endif; ?>
+                                                            <label class="visually-hidden" for="status-<?php echo e((string) $rowId); ?>">Change status</label>
+                                                            <select class="form-select form-select-sm" id="status-<?php echo e((string) $rowId); ?>" name="new_status">
+                                                                <?php foreach (admin_allowed_property_statuses() as $status): ?>
+                                                                    <option value="<?php echo e($status); ?>"<?php echo $rowStatus === $status ? ' selected' : ''; ?>><?php echo e($status); ?></option>
+                                                                <?php endforeach; ?>
+                                                            </select>
+                                                            <button type="submit" class="btn btn-sm btn-auth">Update</button>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>

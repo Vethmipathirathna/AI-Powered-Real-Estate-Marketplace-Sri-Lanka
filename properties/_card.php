@@ -38,7 +38,7 @@ $cardReturnPath = buyer_safe_return_path($favoriteReturnPath ?? 'properties/inde
             <img
                 class="property-image"
                 src="<?php echo e($cardThumb); ?>"
-                alt=""
+                alt="<?php echo e($cardTitle !== '' ? $cardTitle : 'Property listing'); ?>"
                 width="900"
                 height="600"
                 loading="lazy"
@@ -60,8 +60,16 @@ $cardReturnPath = buyer_safe_return_path($favoriteReturnPath ?? 'properties/inde
         <?php if ($cardLister !== ''): ?>
             <p class="property-lister text-muted small mb-3">
                 Listed by <?php echo e($cardLister); ?>
-                <?php if ($cardRole !== ''): ?>
-                    <span>(<?php echo e($cardRole); ?>)</span>
+                <?php
+                $cardRoleLabel = match (strtoupper($cardRole)) {
+                    'SELLER' => 'Seller',
+                    'ADMIN' => 'Admin',
+                    'BUYER' => 'Buyer',
+                    default => $cardRole,
+                };
+                ?>
+                <?php if ($cardRoleLabel !== ''): ?>
+                    <span>(<?php echo e($cardRoleLabel); ?>)</span>
                 <?php endif; ?>
             </p>
         <?php endif; ?>
@@ -75,7 +83,7 @@ $cardReturnPath = buyer_safe_return_path($favoriteReturnPath ?? 'properties/inde
                 include __DIR__ . '/_favorite_button.php';
                 ?>
             <?php elseif ($cardUser === null): ?>
-                <a class="btn btn-outline-secondary btn-sm favorite-guest-link" href="<?php echo e(url('auth/login.php')); ?>" title="Login to Add Favorite" aria-label="Login to Add Favorite">♡ Login to Add Favorite</a>
+                <a class="btn btn-outline-secondary favorite-guest-link" href="<?php echo e(url('auth/login.php')); ?>" title="Login to Add Favorite" aria-label="Login to Add Favorite">♡ Login to Add Favorite</a>
             <?php endif; ?>
         </div>
     </div>
