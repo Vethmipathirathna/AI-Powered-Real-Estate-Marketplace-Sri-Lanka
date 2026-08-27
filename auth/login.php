@@ -20,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $email = trim((string) ($_POST['email'] ?? ''));
         $password = (string) ($_POST['password'] ?? '');
-        // Remember-me UI only — persistent token auth is not implemented yet.
 
         if ($email === '' || $password === '') {
             $errors[] = 'Email and password are required.';
@@ -99,16 +98,9 @@ $flash = flash_get();
                     <input type="email" class="form-control" id="email" name="email" required maxlength="191" value="<?php echo e($email); ?>" autocomplete="username">
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-4">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password">
-                </div>
-
-                <div class="mb-4 form-check">
-                    <input class="form-check-input" type="checkbox" value="1" id="remember_me" name="remember_me" disabled>
-                    <label class="form-check-label" for="remember_me">
-                        Remember me <span class="text-muted">(coming soon)</span>
-                    </label>
                 </div>
 
                 <button type="submit" class="btn btn-auth w-100">Login</button>

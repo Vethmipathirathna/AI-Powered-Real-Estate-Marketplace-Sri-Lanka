@@ -65,7 +65,10 @@ $page_description = 'Seller property details.';
             </div>
             <a class="btn btn-auth" href="<?php echo e(url('seller/properties.php')); ?>">Back to My Properties</a>
         <?php else: ?>
-            <?php $status = (string) ($property['status'] ?? ''); ?>
+            <?php
+            $status = strtoupper((string) ($property['status'] ?? ''));
+            $canEdit = !in_array($status, ['SOLD', 'INACTIVE'], true);
+            ?>
             <div class="admin-hero d-flex flex-wrap justify-content-between align-items-start gap-3">
                 <div>
                     <p class="admin-eyebrow">Listing #<?php echo e((string) $property['property_id']); ?></p>
@@ -77,7 +80,9 @@ $page_description = 'Seller property details.';
                     <p class="mb-0 fw-semibold"><?php echo e(admin_format_lkr($property['asking_price_lkr'] ?? 0)); ?></p>
                 </div>
                 <div class="d-flex flex-wrap gap-2">
-                    <a class="btn btn-auth" href="<?php echo e(url('seller/property_edit.php?id=' . (int) $property['property_id'])); ?>">Edit</a>
+                    <?php if ($canEdit): ?>
+                        <a class="btn btn-auth" href="<?php echo e(url('seller/property_edit.php?id=' . (int) $property['property_id'])); ?>">Edit</a>
+                    <?php endif; ?>
                     <a class="btn btn-outline-secondary" href="<?php echo e(url('seller/properties.php')); ?>">Back to list</a>
                 </div>
             </div>

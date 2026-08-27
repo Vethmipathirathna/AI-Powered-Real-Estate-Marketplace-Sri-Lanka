@@ -24,6 +24,20 @@ try {
         if ($property === null) {
             $notFound = true;
         } else {
+            $lockedStatus = strtoupper((string) ($property['status'] ?? ''));
+            if (
+                $_SERVER['REQUEST_METHOD'] !== 'POST'
+                && in_array($lockedStatus, ['SOLD', 'INACTIVE'], true)
+            ) {
+                flash_set(
+                    'error',
+                    $lockedStatus === 'SOLD'
+                        ? 'Sold listings cannot be edited. Contact Admin if the listing needs to be republished.'
+                        : 'Inactive listings cannot be edited.'
+                );
+                redirect('seller/property_view.php?id=' . $propertyId);
+            }
+
             $images = admin_property_images($pdo, $propertyId);
         }
     }
@@ -33,6 +47,17 @@ try {
 
 // Image management actions (own property only)
 if (!$notFound && $property !== null && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $lockedStatus = strtoupper((string) ($property['status'] ?? ''));
+    if (in_array($lockedStatus, ['SOLD', 'INACTIVE'], true)) {
+        flash_set(
+            'error',
+            $lockedStatus === 'SOLD'
+                ? 'Sold listings cannot be modified.'
+                : 'Inactive listings cannot be modified.'
+        );
+        redirect('seller/property_view.php?id=' . $propertyId);
+    }
+
     $action = (string) ($_POST['action'] ?? 'update_details');
 
     if (!verify_csrf($_POST['csrf_token'] ?? null)) {

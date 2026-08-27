@@ -227,6 +227,13 @@ function admin_format_date(?string $datetime): string
                         </a>
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
+                        <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('admin/sold_history.php')); ?>">
+                            <h3 class="shortcut-title">Sold Properties</h3>
+                            <p class="shortcut-text">Browse sold listings from all sellers and admin listers.</p>
+                            <span class="shortcut-badge"><?php echo $stats['sold'] > 0 ? e((string) $stats['sold']) . ' sold' : 'View history'; ?></span>
+                        </a>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
                         <a class="shortcut-card shortcut-card-link h-100" href="<?php echo e(url('admin/messages.php')); ?>">
                             <h3 class="shortcut-title">My Listing Messages</h3>
                             <p class="shortcut-text">Private buyer conversations for properties you listed — not other listers' inboxes.</p>

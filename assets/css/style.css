@@ -1234,6 +1234,7 @@ h4,
 }
 
 .stat-card,
+.seller-stat-card,
 .summary-panel,
 .shortcut-card,
 .table-panel {
@@ -1243,9 +1244,33 @@ h4,
     box-shadow: var(--shadow-soft);
 }
 
-.stat-card {
+.stat-card,
+.seller-stat-card {
     height: 100%;
+    min-width: 0;
     padding: 1.15rem 1rem;
+}
+
+.seller-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.seller-stat-card {
+    min-width: 0;
+}
+
+@media (max-width: 1100px) {
+    .seller-stats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .seller-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 .stat-label {

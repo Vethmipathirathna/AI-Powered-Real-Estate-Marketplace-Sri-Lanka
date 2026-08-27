@@ -13,32 +13,62 @@ $flash = flash_get();
 $page_title = 'My Properties | RealEstateAI';
 $page_description = 'Your RealEstateAI property listings.';
 
-// Soft-deactivate own listing
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'deactivate') {
-    if (!verify_csrf($_POST['csrf_token'] ?? null)) {
-        flash_set('error', 'Invalid request. Please try again.');
+// Status changes on own listings only (POST + CSRF).
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = (string) ($_POST['action'] ?? '');
+
+    if ($action === 'deactivate' || $action === 'mark_sold') {
+        if (!verify_csrf($_POST['csrf_token'] ?? null)) {
+            flash_set('error', 'Invalid request. Please try again.');
+            redirect('seller/properties.php');
+        }
+
+        $propertyId = (int) ($_POST['property_id'] ?? 0);
+
+        try {
+            $pdo = db();
+            $property = $propertyId > 0 ? seller_find_own_property($pdo, $propertyId, $userId) : null;
+
+            if ($property === null) {
+                flash_set('error', 'Property not found.');
+            } elseif ($action === 'mark_sold') {
+                $currentStatus = strtoupper((string) ($property['status'] ?? ''));
+
+                if ($currentStatus === 'SOLD') {
+                    flash_set('success', 'Property is already marked as sold.');
+                } elseif ($currentStatus !== 'AVAILABLE') {
+                    flash_set('error', 'Only available listings can be marked as sold.');
+                } else {
+                    $stmt = $pdo->prepare(
+                        'UPDATE properties SET status = ? WHERE property_id = ? AND listed_by_user_id = ? AND status = ?'
+                    );
+                    $stmt->execute(['SOLD', $propertyId, $userId, 'AVAILABLE']);
+
+                    if ($stmt->rowCount() === 0) {
+                        flash_set('error', 'Unable to mark this property as sold. It may no longer be available.');
+                    } else {
+                        flash_set('success', 'Property marked as sold successfully.');
+                    }
+                }
+            } else {
+                $currentStatus = strtoupper((string) ($property['status'] ?? ''));
+
+                if ($currentStatus === 'INACTIVE') {
+                    flash_set('success', 'Listing is already inactive.');
+                } else {
+                    $stmt = $pdo->prepare(
+                        'UPDATE properties SET status = ? WHERE property_id = ? AND listed_by_user_id = ?'
+                    );
+                    $stmt->execute(['INACTIVE', $propertyId, $userId]);
+                    flash_set('success', 'Listing marked as inactive.');
+                }
+            }
+        } catch (Throwable $e) {
+            flash_set('error', 'Unable to update listing status right now.');
+        }
+
         redirect('seller/properties.php');
     }
-
-    $propertyId = (int) ($_POST['property_id'] ?? 0);
-
-    try {
-        $pdo = db();
-        $property = $propertyId > 0 ? seller_find_own_property($pdo, $propertyId, $userId) : null;
-        if ($property === null) {
-            flash_set('error', 'Property not found.');
-        } else {
-            $stmt = $pdo->prepare(
-                'UPDATE properties SET status = ? WHERE property_id = ? AND listed_by_user_id = ?'
-            );
-            $stmt->execute(['INACTIVE', $propertyId, $userId]);
-            flash_set('success', 'Listing marked as inactive.');
-        }
-    } catch (Throwable $e) {
-        flash_set('error', 'Unable to update listing status right now.');
-    }
-
-    redirect('seller/properties.php');
 }
 
 $properties = [];
@@ -115,8 +145,9 @@ try {
                                 <?php foreach ($properties as $row): ?>
                                     <?php
                                     $rowId = (int) ($row['property_id'] ?? 0);
-                                    $rowStatus = (string) ($row['status'] ?? '');
+                                    $rowStatus = strtoupper((string) ($row['status'] ?? ''));
                                     $thumb = admin_image_url($row['primary_image'] ?? null);
+                                    $canEdit = !in_array($rowStatus, ['SOLD', 'INACTIVE'], true);
                                     ?>
                                     <tr>
                                         <td>
@@ -137,7 +168,21 @@ try {
                                         <td>
                                             <div class="action-stack">
                                                 <a class="btn btn-sm btn-outline-secondary" href="<?php echo e(url('seller/property_view.php?id=' . $rowId)); ?>">View</a>
-                                                <a class="btn btn-sm btn-outline-secondary" href="<?php echo e(url('seller/property_edit.php?id=' . $rowId)); ?>">Edit</a>
+                                                <?php if ($canEdit): ?>
+                                                    <a class="btn btn-sm btn-outline-secondary" href="<?php echo e(url('seller/property_edit.php?id=' . $rowId)); ?>">Edit</a>
+                                                <?php endif; ?>
+                                                <?php if ($rowStatus === 'AVAILABLE'): ?>
+                                                    <form method="post" action="" class="d-inline">
+                                                        <?php echo csrf_field(); ?>
+                                                        <input type="hidden" name="action" value="mark_sold">
+                                                        <input type="hidden" name="property_id" value="<?php echo e((string) $rowId); ?>">
+                                                        <button
+                                                            type="submit"
+                                                            class="btn btn-sm btn-outline-primary"
+                                                            onclick="return confirm('Are you sure you want to mark this property as sold?');"
+                                                        >Mark as Sold</button>
+                                                    </form>
+                                                <?php endif; ?>
                                                 <?php if ($rowStatus !== 'INACTIVE'): ?>
                                                     <form method="post" action="" class="d-inline">
                                                         <?php echo csrf_field(); ?>

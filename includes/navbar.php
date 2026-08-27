@@ -23,6 +23,7 @@ $isAdminUsers = str_contains($scriptName, '/admin/users.php')
     || str_contains($scriptName, '/admin/user_edit.php');
 $isAdminManageProperties = str_contains($scriptName, '/admin/properties.php')
     || str_contains($scriptName, '/admin/property_');
+$isAdminSoldHistory = str_contains($scriptName, '/admin/sold_history.php');
 $isAdminSupport = str_contains($scriptName, '/admin/support.php')
     || str_contains($scriptName, '/admin/support_conversation.php');
 $isAdminMessages = str_contains($scriptName, '/admin/messages.php')
@@ -45,7 +46,7 @@ $canUseAiEstimator = $user !== null && in_array($userRole, ['BUYER', 'SELLER', '
 $aiEstimatorHref = $canUseAiEstimator ? url('ai/estimate.php') : url('auth/login.php');
 $canContactSupport = $isBuyer || $isSeller;
 $isAdminDropdownActive = $isAdmin
-    && ($isAdminUsers || $isAdminManageProperties || $isAdminPredictions || $isAdminSupport || $isAdminMessages);
+    && ($isAdminUsers || $isAdminManageProperties || $isAdminSoldHistory || $isAdminPredictions || $isAdminSupport || $isAdminMessages);
 $showPublicAboutContact = !$isAdmin && !$isBuyer;
 $isBuyerSupport = str_contains($scriptName, '/support/');
 ?>
@@ -131,6 +132,9 @@ $isBuyerSupport = str_contains($scriptName, '/support/');
                                 </li>
                                 <li>
                                     <a class="dropdown-item<?php echo $isAdminManageProperties ? ' active' : ''; ?>"<?php echo $isAdminManageProperties ? ' aria-current="page"' : ''; ?> href="<?php echo e(url('admin/properties.php')); ?>">Manage Properties</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item<?php echo $isAdminSoldHistory ? ' active' : ''; ?>"<?php echo $isAdminSoldHistory ? ' aria-current="page"' : ''; ?> href="<?php echo e(url('admin/sold_history.php')); ?>">Sold History</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item<?php echo $isAdminPredictions ? ' active' : ''; ?>"<?php echo $isAdminPredictions ? ' aria-current="page"' : ''; ?> href="<?php echo e(url('admin/predictions.php')); ?>">AI Predictions</a>

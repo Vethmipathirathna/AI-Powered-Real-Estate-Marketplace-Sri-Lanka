@@ -86,25 +86,13 @@ try {
                     <h2 id="seller-stats-heading" class="admin-section-title">My listing overview</h2>
                     <p class="admin-section-text">Counts for properties you listed only.</p>
                 </div>
-                <div class="row g-3">
-                    <div class="col-6 col-md-4 col-xl">
-                        <div class="stat-card"><span class="stat-label">Total</span><strong class="stat-value"><?php echo e((string) $stats['total']); ?></strong></div>
-                    </div>
-                    <div class="col-6 col-md-4 col-xl">
-                        <div class="stat-card"><span class="stat-label">Available</span><strong class="stat-value"><?php echo e((string) $stats['available']); ?></strong></div>
-                    </div>
-                    <div class="col-6 col-md-4 col-xl">
-                        <div class="stat-card"><span class="stat-label">Pending</span><strong class="stat-value"><?php echo e((string) $stats['pending']); ?></strong></div>
-                    </div>
-                    <div class="col-6 col-md-4 col-xl">
-                        <div class="stat-card"><span class="stat-label">Sold</span><strong class="stat-value"><?php echo e((string) $stats['sold']); ?></strong></div>
-                    </div>
-                    <div class="col-6 col-md-4 col-xl">
-                        <div class="stat-card"><span class="stat-label">Inactive</span><strong class="stat-value"><?php echo e((string) $stats['inactive']); ?></strong></div>
-                    </div>
-                    <div class="col-6 col-md-4 col-xl">
-                        <div class="stat-card"><span class="stat-label">Unread messages</span><strong class="stat-value"><?php echo e((string) $unreadMessages); ?></strong></div>
-                    </div>
+                <div class="seller-stats-grid">
+                    <div class="seller-stat-card"><span class="stat-label">Total</span><strong class="stat-value"><?php echo e((string) $stats['total']); ?></strong></div>
+                    <div class="seller-stat-card"><span class="stat-label">Available</span><strong class="stat-value"><?php echo e((string) $stats['available']); ?></strong></div>
+                    <div class="seller-stat-card"><span class="stat-label">Pending</span><strong class="stat-value"><?php echo e((string) $stats['pending']); ?></strong></div>
+                    <div class="seller-stat-card"><span class="stat-label">Sold</span><strong class="stat-value"><?php echo e((string) $stats['sold']); ?></strong></div>
+                    <div class="seller-stat-card"><span class="stat-label">Inactive</span><strong class="stat-value"><?php echo e((string) $stats['inactive']); ?></strong></div>
+                    <div class="seller-stat-card"><span class="stat-label">Unread messages</span><strong class="stat-value"><?php echo e((string) $unreadMessages); ?></strong></div>
                 </div>
             </section>
 
@@ -122,6 +110,13 @@ try {
                             <h3 class="shortcut-title">My Properties</h3>
                             <p class="shortcut-text">View and edit the listings you own.</p>
                             <span class="shortcut-badge">Manage</span>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="shortcut-card shortcut-card-link" href="<?php echo e(url('seller/sold_history.php')); ?>">
+                            <h3 class="shortcut-title">Sold History</h3>
+                            <p class="shortcut-text">Review properties you have marked as sold.</p>
+                            <span class="shortcut-badge"><?php echo $stats['sold'] > 0 ? e((string) $stats['sold']) . ' sold' : 'View history'; ?></span>
                         </a>
                     </div>
                     <div class="col-md-4">
