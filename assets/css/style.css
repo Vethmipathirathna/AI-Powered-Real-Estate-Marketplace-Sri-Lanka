@@ -315,7 +315,20 @@ h4,
     max-width: 40rem;
     padding-top: 5.5rem;
     padding-bottom: 4.5rem;
-    animation: hero-rise 0.9s ease-out both;
+}
+
+.hero-animate--1 { animation-delay: 0.1s; }
+.hero-animate--2 { animation-delay: 0.22s; }
+.hero-animate--3 { animation-delay: 0.36s; }
+.hero-animate--4 { animation-delay: 0.5s; }
+.hero-animate--5 { animation-delay: 0.62s; }
+
+@media (prefers-reduced-motion: no-preference) {
+    .home-page .hero-animate {
+        opacity: 0;
+        transform: translateY(15px);
+        animation: hero-enter 0.65s ease-out forwards;
+    }
 }
 
 .hero-brand {
@@ -355,37 +368,46 @@ h4,
     font-weight: 600;
     border-radius: 0.45rem;
     padding: 0.75rem 1.35rem;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .btn-hero-primary {
     background: var(--color-sand);
     color: var(--color-ink);
     border: 1px solid var(--color-sand);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
 .btn-hero-primary:hover {
     background: #e4d0b0;
     color: var(--color-ink);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+.btn-hero-primary:focus-visible {
     transform: translateY(-1px);
+    box-shadow: var(--focus-ring);
 }
 
 .btn-hero-secondary {
     background: rgba(255, 255, 255, 0.12);
     color: var(--color-white);
     border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 }
 
 .btn-hero-secondary:hover {
     background: rgba(255, 255, 255, 0.2);
     color: var(--color-white);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
 }
 
 /* ---------- Search ---------- */
 
 .search-section {
-    padding: 3.5rem 0 1rem;
+    padding: 3.5rem 0 0.75rem;
     margin-top: -2.5rem;
     position: relative;
     z-index: 2;
@@ -424,12 +446,15 @@ h4,
     color: var(--color-white);
     border: 1px solid var(--color-teal);
     margin-top: 0.1rem;
+    box-shadow: 0 2px 8px rgba(15, 107, 99, 0.15);
 }
 
 .btn-search:hover {
     background: var(--color-teal-dark);
     border-color: var(--color-teal-dark);
     color: var(--color-white);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15, 107, 99, 0.22);
 }
 
 .search-note {
@@ -442,7 +467,7 @@ h4,
 /* ---------- Featured Properties ---------- */
 
 .properties-section {
-    padding: 4.5rem 0;
+    padding: 3rem 0 4.5rem;
 }
 
 .property-card {
@@ -457,9 +482,10 @@ h4,
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.property-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 34px rgba(20, 37, 38, 0.12);
+.property-card:hover,
+.property-card:focus-within {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 34px rgba(20, 37, 38, 0.14);
 }
 
 .property-media {
@@ -473,6 +499,12 @@ h4,
     aspect-ratio: 3 / 2;
     object-fit: cover;
     object-position: center;
+    transition: transform 0.25s ease;
+}
+
+.property-card:hover .property-image,
+.property-card:focus-within .property-image {
+    transform: scale(1.03);
 }
 
 .property-image-placeholder {
@@ -666,6 +698,8 @@ h4,
 .btn-property:hover {
     background: var(--color-teal);
     color: var(--color-white);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 107, 99, 0.18);
 }
 
 /* ---------- AI Section ---------- */
@@ -767,6 +801,14 @@ h4,
     border-radius: var(--radius);
     padding: 1.6rem 1.35rem;
     box-shadow: var(--shadow-soft);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.feature-item:hover,
+.feature-item:focus-within {
+    transform: translateY(-8px) scale(1.015);
+    box-shadow: 0 16px 36px rgba(20, 37, 38, 0.14);
+    border-color: rgba(15, 107, 99, 0.35);
 }
 
 .feature-icon {
@@ -781,6 +823,13 @@ h4,
     font-family: var(--font-display);
     font-weight: 700;
     margin-bottom: 1rem;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.feature-item:hover .feature-icon,
+.feature-item:focus-within .feature-icon {
+    background: var(--color-teal);
+    color: var(--color-white);
 }
 
 .feature-title {
@@ -901,16 +950,44 @@ h4,
     }
 }
 
-@keyframes hero-rise {
+@keyframes hero-enter {
     from {
         opacity: 0;
-        transform: translateY(18px);
+        transform: translateY(15px);
     }
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
+
+/* Home page scroll reveal — visible by default; hidden only after JS adds html.js-reveal-ready */
+.home-page .reveal {
+    transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+html.js-reveal-ready .home-page .reveal:not(.is-visible) {
+    opacity: 0;
+    transform: translateY(15px);
+}
+
+html.js-reveal-ready .home-page .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+html.js-reveal-ready .home-page .properties-section .row.g-4 > .reveal:nth-child(2) { transition-delay: 0.08s; }
+html.js-reveal-ready .home-page .properties-section .row.g-4 > .reveal:nth-child(3) { transition-delay: 0.16s; }
+html.js-reveal-ready .home-page .properties-section .row.g-4 > .reveal:nth-child(4) { transition-delay: 0.24s; }
+html.js-reveal-ready .home-page .properties-section .row.g-4 > .reveal:nth-child(5) { transition-delay: 0.32s; }
+html.js-reveal-ready .home-page .properties-section .row.g-4 > .reveal:nth-child(6) { transition-delay: 0.4s; }
+
+html.js-reveal-ready .home-page .why-section .row.g-4 > .reveal:nth-child(2) { transition-delay: 0.08s; }
+html.js-reveal-ready .home-page .why-section .row.g-4 > .reveal:nth-child(3) { transition-delay: 0.16s; }
+html.js-reveal-ready .home-page .why-section .row.g-4 > .reveal:nth-child(4) { transition-delay: 0.24s; }
+
+html.js-reveal-ready .home-page .steps-section .row.g-4 > .reveal:nth-child(2) { transition-delay: 0.1s; }
+html.js-reveal-ready .home-page .steps-section .row.g-4 > .reveal:nth-child(3) { transition-delay: 0.2s; }
 
 /* ---------- Responsive ---------- */
 
@@ -1005,6 +1082,11 @@ h4,
     .search-section {
         margin-top: -1.25rem;
         padding-top: 2.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .properties-section {
+        padding-top: 2.25rem;
     }
 
     .ai-panel {
@@ -1137,12 +1219,21 @@ h4,
     background: var(--color-teal);
     border: 1px solid var(--color-teal);
     color: var(--color-white);
+    box-shadow: 0 2px 8px rgba(15, 107, 99, 0.15);
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
 }
 
 .btn-auth:hover {
     background: var(--color-teal-dark);
     border-color: var(--color-teal-dark);
     color: var(--color-white);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15, 107, 99, 0.22);
+}
+
+.btn-auth:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: var(--focus-ring);
 }
 
 .auth-switch {
@@ -1403,6 +1494,15 @@ h4,
     padding: 0.35rem 0;
 }
 
+.empty-state-panel {
+    text-align: center;
+    padding: 2rem 1.5rem;
+}
+
+.empty-state-panel .empty-state {
+    margin-bottom: 1rem;
+}
+
 .admin-breadcrumb {
     display: flex;
     flex-wrap: wrap;
@@ -1467,12 +1567,27 @@ h4,
     padding: 0.65rem 0.9rem;
 }
 
+.filter-panel .form-control,
+.filter-panel .form-select,
+.admin-form-card .form-control,
+.admin-form-card .form-select,
+.marketplace-filters .form-control,
+.marketplace-filters .form-select,
+.form-control,
+.form-select,
+textarea.form-control {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
 .filter-panel .form-control:focus,
 .filter-panel .form-select:focus,
 .admin-form-card .form-control:focus,
 .admin-form-card .form-select:focus,
 .marketplace-filters .form-control:focus,
-.marketplace-filters .form-select:focus {
+.marketplace-filters .form-select:focus,
+.form-control:focus,
+.form-select:focus,
+textarea.form-control:focus {
     border-color: var(--color-teal);
     box-shadow: 0 0 0 0.2rem rgba(15, 107, 99, 0.15);
 }
@@ -1534,13 +1649,15 @@ h4,
 .shortcut-card-link {
     display: block;
     color: inherit;
-    transition: border-color 0.2s ease, transform 0.2s ease;
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.shortcut-card-link:hover {
+.shortcut-card-link:hover,
+.shortcut-card-link:focus-visible {
     border-color: var(--color-teal);
     color: inherit;
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(20, 37, 38, 0.1);
 }
 
 .admin-shortcuts-grid > [class*="col-"] {
@@ -1689,6 +1806,17 @@ h4,
 .badge-prop-inactive {
     background: #f7ebea;
     color: #8a3b32;
+}
+
+.status-pill.badge-prop-available,
+.status-pill.badge-prop-pending,
+.status-pill.badge-prop-sold,
+.status-pill.badge-prop-inactive {
+    padding: 0.22rem 0.55rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    border-radius: 0.35rem;
 }
 
 .detail-grid {
@@ -2056,8 +2184,16 @@ h4,
     }
 
     .hero-media,
-    .hero-content,
+    .home-page .hero-animate,
+    .home-page .reveal,
     .property-card,
+    .property-image,
+    .feature-item,
+    .feature-icon,
+    .shortcut-card-link,
+    .btn-auth,
+    .btn-search,
+    .btn-property,
     .btn-hero-primary,
     .btn-hero-secondary {
         animation: none !important;
@@ -2068,8 +2204,28 @@ h4,
         transform: none;
     }
 
-    .property-card:hover {
+    html.js-reveal-ready .home-page .reveal:not(.is-visible),
+    html.js-reveal-ready .home-page .reveal.is-visible {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .property-card:hover,
+    .property-card:focus-within,
+    .property-card:hover .property-image,
+    .property-card:focus-within .property-image,
+    .feature-item:hover,
+    .feature-item:focus-within,
+    .shortcut-card-link:hover,
+    .shortcut-card-link:focus-visible,
+    .btn-auth:hover,
+    .btn-auth:focus-visible,
+    .btn-search:hover,
+    .btn-property:hover,
+    .btn-hero-primary:hover,
+    .btn-hero-primary:focus-visible {
         transform: none;
+        box-shadow: var(--shadow-soft);
     }
 }
 

@@ -49,8 +49,9 @@ $page_description = 'Buyer inquiries for your property listings.';
         <?php if ($loadError !== null): ?>
             <div class="alert alert-danger" role="alert"><?php echo e($loadError); ?></div>
         <?php elseif ($summaries === []): ?>
-            <div class="summary-panel">
-                <p class="empty-state mb-0">No buyer messages yet for your listings.</p>
+            <div class="summary-panel empty-state-panel">
+                <p class="empty-state">No buyer messages yet for your listings.</p>
+                <a class="btn btn-auth" href="<?php echo e(url('seller/properties.php')); ?>">Manage your listings</a>
             </div>
         <?php else: ?>
             <div class="message-inbox-list">

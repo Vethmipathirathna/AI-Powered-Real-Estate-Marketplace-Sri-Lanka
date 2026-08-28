@@ -59,12 +59,15 @@ try {
         <?php if ($loadError !== null): ?>
             <div class="alert alert-danger" role="alert"><?php echo e($loadError); ?></div>
         <?php else: ?>
+            <?php if ($properties === []): ?>
+                <div class="summary-panel empty-state-panel">
+                    <p class="empty-state">No sold properties have been recorded yet.</p>
+                    <a class="btn btn-auth" href="<?php echo e(url('seller/properties.php')); ?>">Go to My Properties</a>
+                </div>
+            <?php else: ?>
             <div class="table-panel">
-                <?php if ($properties === []): ?>
-                    <p class="empty-state mb-0">No sold properties have been recorded yet.</p>
-                <?php else: ?>
-                    <div class="table-responsive">
-                        <table class="table admin-table mb-0">
+                <div class="table-responsive">
+                    <table class="table admin-table mb-0">
                             <thead>
                                 <tr>
                                     <th scope="col">Property</th>
@@ -106,9 +109,9 @@ try {
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
-                    </div>
-                <?php endif; ?>
+                </div>
             </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </main>

@@ -49,8 +49,8 @@ $page_description = 'Your property conversations on RealEstateAI.';
         <?php if ($loadError !== null): ?>
             <div class="alert alert-danger" role="alert"><?php echo e($loadError); ?></div>
         <?php elseif ($summaries === []): ?>
-            <div class="summary-panel">
-                <p class="empty-state mb-3">You have no conversations yet.</p>
+            <div class="summary-panel empty-state-panel">
+                <p class="empty-state">You have no conversations yet.</p>
                 <a class="btn btn-auth" href="<?php echo e(url('properties/index.php')); ?>">Browse properties</a>
             </div>
         <?php else: ?>

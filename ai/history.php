@@ -54,8 +54,8 @@ $page_description = 'Your AI house price estimate history on RealEstateAI.';
         <?php if ($loadError !== null): ?>
             <div class="alert alert-danger" role="alert"><?php echo e($loadError); ?></div>
         <?php elseif ($history === []): ?>
-            <div class="summary-panel">
-                <p class="empty-state mb-3">You have no saved predictions yet.</p>
+            <div class="summary-panel empty-state-panel">
+                <p class="empty-state">You have no saved predictions yet.</p>
                 <a class="btn btn-auth" href="<?php echo e(url('ai/estimate.php')); ?>">Get your first estimate</a>
             </div>
         <?php else: ?>

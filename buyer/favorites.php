@@ -65,8 +65,8 @@ $page_description = 'Your saved property listings on RealEstateAI.';
         <?php if ($loadError !== null): ?>
             <div class="alert alert-danger" role="alert"><?php echo e($loadError); ?></div>
         <?php elseif ($favorites === []): ?>
-            <div class="summary-panel text-center">
-                <p class="empty-state mb-3">You have not saved any properties yet.</p>
+            <div class="summary-panel empty-state-panel">
+                <p class="empty-state">You have not saved any properties yet.</p>
                 <a class="btn btn-auth" href="<?php echo e(url('properties/index.php')); ?>">Browse Properties</a>
             </div>
         <?php else: ?>

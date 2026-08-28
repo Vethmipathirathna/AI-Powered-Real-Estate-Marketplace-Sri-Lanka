@@ -242,7 +242,10 @@ $queryBase = [
                     <p class="mb-3 text-muted"><?php echo e((string) $totalProperties); ?> sold listing<?php echo $totalProperties === 1 ? '' : 's'; ?> found</p>
 
                     <?php if ($properties === []): ?>
-                        <p class="empty-state mb-0">No sold properties have been recorded yet.</p>
+                        <div class="empty-state-panel py-2">
+                            <p class="empty-state">No sold properties have been recorded yet.</p>
+                            <a class="btn btn-auth" href="<?php echo e(url('admin/properties.php')); ?>">View all properties</a>
+                        </div>
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table admin-table mb-0">

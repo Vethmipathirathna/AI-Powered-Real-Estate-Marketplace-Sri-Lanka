@@ -41,4 +41,49 @@ document.addEventListener('DOMContentLoaded', function () {
         areaSelect.addEventListener('change', syncAreaOtherField);
         syncAreaOtherField();
     }
+
+    initHomePageAnimations();
 });
+
+function initHomePageAnimations() {
+    var homePage = document.querySelector('main.home-page');
+    if (!homePage) {
+        return;
+    }
+
+    var revealElements = homePage.querySelectorAll('.reveal');
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (revealElements.length === 0 || prefersReducedMotion) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    document.documentElement.classList.add('js-reveal-ready');
+
+    if (!('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    var revealObserver = new IntersectionObserver(function (entries, observer) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+        });
+    }, {
+        threshold: 0.08,
+        rootMargin: '0px 0px -5% 0px',
+    });
+
+    revealElements.forEach(function (element) {
+        revealObserver.observe(element);
+    });
+}
