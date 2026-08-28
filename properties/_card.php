@@ -7,6 +7,7 @@
  */
 declare(strict_types=1);
 
+require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../buyer/_helpers.php';
 
 $cardId = (int) ($property['property_id'] ?? 0);
@@ -24,7 +25,9 @@ $cardThumb = admin_image_url($property['primary_image'] ?? null);
 $locationLabel = $cardArea !== '' ? ($cardDistrict . ', ' . $cardArea) : $cardDistrict;
 
 $cardUser = current_user();
-$showFavoriteButton = !($hideFavoriteButton ?? false) && buyer_is_buyer($cardUser);
+$hideFavoriteControl = (bool) ($hideFavoriteButton ?? false);
+$showFavoriteButton = buyer_should_show_favorite_button($cardUser, $hideFavoriteControl);
+$showGuestFavoriteLink = buyer_should_show_guest_favorite_link($cardUser);
 $isFavorited = false;
 if ($showFavoriteButton) {
     $favoriteIds = $favoritePropertyIds ?? [];
@@ -82,7 +85,7 @@ $cardReturnPath = buyer_safe_return_path($favoriteReturnPath ?? 'properties/inde
                 $favoriteInline = true;
                 include __DIR__ . '/_favorite_button.php';
                 ?>
-            <?php elseif ($cardUser === null): ?>
+            <?php elseif ($showGuestFavoriteLink): ?>
                 <a class="btn btn-outline-secondary favorite-guest-link" href="<?php echo e(url('auth/login.php')); ?>" title="Login to Add Favorite" aria-label="Login to Add Favorite">♡ Login to Add Favorite</a>
             <?php endif; ?>
         </div>

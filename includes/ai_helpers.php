@@ -21,6 +21,20 @@ if (!function_exists('ai_estimator_roles')) {
     }
 }
 
+if (!function_exists('ai_user_can_estimate')) {
+    /**
+     * @param array{user_id?: int, role?: string}|null $user
+     */
+    function ai_user_can_estimate(?array $user): bool
+    {
+        if ($user === null) {
+            return false;
+        }
+
+        return in_array(strtoupper((string) ($user['role'] ?? '')), ai_estimator_roles(), true);
+    }
+}
+
 if (!function_exists('ai_encode_water_supply')) {
     function ai_encode_water_supply(string $value): int
     {
@@ -237,6 +251,178 @@ if (!function_exists('ai_validate_form_input')) {
         }
 
         return [$clean, [], $form];
+    }
+}
+
+if (!function_exists('ai_map_property_to_clean')) {
+    /**
+     * Map a marketplace property row to validated AI estimator input.
+     *
+     * Property listings store water_supply and electricity as yes/no flags. When
+     * present, they are mapped to the AI model's default urban categories.
+     *
+     * @param array<string, mixed> $property
+     * @return array{0: array<string, mixed>|null, 1: list<string>}
+     */
+    function ai_map_property_to_clean(array $property): array
+    {
+        $errors = [];
+        $clean = [];
+
+        $district = trim((string) ($property['district'] ?? ''));
+        if ($district === '') {
+            $errors[] = 'District is missing.';
+        } elseif (!in_array($district, ai_model_districts(), true)) {
+            $errors[] = 'District is not supported by the AI model.';
+        } else {
+            $clean['district'] = $district;
+        }
+
+        $area = trim((string) ($property['area'] ?? ''));
+        if ($area === '') {
+            $errors[] = 'Area is missing.';
+        } else {
+            $clean['area'] = $area;
+        }
+
+        if ($property['perch'] === null || !is_numeric($property['perch']) || (float) $property['perch'] <= 0) {
+            $errors[] = 'Land size (perch) is missing or invalid.';
+        } else {
+            $clean['perch'] = (float) $property['perch'];
+        }
+
+        foreach (['bedrooms', 'bathrooms'] as $field) {
+            if ($property[$field] === null || !is_numeric($property[$field]) || (int) $property[$field] < 0) {
+                $errors[] = ucfirst(str_replace('_', ' ', $field)) . ' is missing or invalid.';
+            } else {
+                $clean[$field] = (int) $property[$field];
+            }
+        }
+
+        if (
+            $property['kitchen_area_sqft'] === null
+            || !is_numeric($property['kitchen_area_sqft'])
+            || (float) $property['kitchen_area_sqft'] < 0
+        ) {
+            $errors[] = 'Kitchen area is missing or invalid.';
+        } else {
+            $clean['kitchen_area_sqft'] = (float) $property['kitchen_area_sqft'];
+        }
+
+        $parkingSpots = (int) ($property['parking_spots'] ?? 0);
+        if ($parkingSpots < 0) {
+            $errors[] = 'Parking spots is invalid.';
+        } else {
+            $clean['parking_spots'] = $parkingSpots;
+        }
+
+        $clean['has_garden'] = (int) ($property['has_garden'] ?? 0) === 1;
+        $clean['has_ac'] = (int) ($property['has_ac'] ?? 0) === 1;
+
+        if ((int) ($property['water_supply'] ?? 0) !== 1) {
+            $errors[] = 'Water supply is not recorded for this property.';
+        } else {
+            $clean['water_supply'] = 'Pipe-borne';
+        }
+
+        if ((int) ($property['electricity'] ?? 0) !== 1) {
+            $errors[] = 'Electricity is not recorded for this property.';
+        } else {
+            $clean['electricity'] = 'Single phase';
+        }
+
+        if ($property['floors'] === null || (int) $property['floors'] < 1) {
+            $errors[] = 'Floors is missing or invalid.';
+        } else {
+            $clean['floors'] = (int) $property['floors'];
+        }
+
+        $maxYear = (int) date('Y') + 1;
+        if ($property['year_built'] === null || !is_numeric($property['year_built'])) {
+            $errors[] = 'Year built is missing or invalid.';
+        } else {
+            $yearBuilt = (int) $property['year_built'];
+            if ($yearBuilt < 1800 || $yearBuilt > $maxYear) {
+                $errors[] = 'Year built is missing or invalid.';
+            } else {
+                $clean['year_built'] = $yearBuilt;
+            }
+        }
+
+        if ($errors !== []) {
+            return [null, $errors];
+        }
+
+        return [$clean, []];
+    }
+}
+
+if (!function_exists('ai_format_listing_comparison')) {
+    /**
+     * @return array{label: string, amount: float, percent: float}
+     */
+    function ai_format_listing_comparison(float $askingPrice, float $estimatedPrice): array
+    {
+        if ($estimatedPrice <= 0) {
+            return [
+                'label' => '—',
+                'amount' => 0.0,
+                'percent' => 0.0,
+            ];
+        }
+
+        $amount = $askingPrice - $estimatedPrice;
+        $percent = ($amount / $estimatedPrice) * 100;
+        $absPercent = abs($percent);
+
+        if ($absPercent < 1.0) {
+            $label = 'Close to AI estimate';
+        } elseif ($amount > 0) {
+            $label = number_format($absPercent, 1) . '% above AI estimate';
+        } else {
+            $label = number_format($absPercent, 1) . '% below AI estimate';
+        }
+
+        return [
+            'label' => $label,
+            'amount' => $amount,
+            'percent' => $percent,
+        ];
+    }
+}
+
+if (!function_exists('ai_store_property_insight')) {
+    /** @param array<string, mixed> $payload */
+    function ai_store_property_insight(int $propertyId, array $payload): void
+    {
+        start_app_session();
+        $_SESSION['property_ai_insight'] = [
+            'property_id' => $propertyId,
+            'payload' => $payload,
+        ];
+    }
+}
+
+if (!function_exists('ai_pull_property_insight')) {
+    /** @return array<string, mixed>|null */
+    function ai_pull_property_insight(int $propertyId): ?array
+    {
+        start_app_session();
+
+        if (empty($_SESSION['property_ai_insight']) || !is_array($_SESSION['property_ai_insight'])) {
+            return null;
+        }
+
+        $stored = $_SESSION['property_ai_insight'];
+        unset($_SESSION['property_ai_insight']);
+
+        if ((int) ($stored['property_id'] ?? 0) !== $propertyId) {
+            return null;
+        }
+
+        $payload = $stored['payload'] ?? null;
+
+        return is_array($payload) ? $payload : null;
     }
 }
 

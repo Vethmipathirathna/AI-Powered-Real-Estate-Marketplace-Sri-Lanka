@@ -2396,6 +2396,39 @@ textarea.form-control:focus {
     font-size: 0.92rem;
 }
 
+.ai-insight-rows {
+    margin: 0;
+}
+
+.ai-insight-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.ai-insight-row:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.ai-insight-row dt {
+    margin: 0;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-muted);
+}
+
+.ai-insight-row dd {
+    margin: 0;
+    font-size: 0.96rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    text-align: right;
+}
+
 .ai-estimate-form .form-label {
     font-weight: 600;
     color: var(--color-ink-soft);

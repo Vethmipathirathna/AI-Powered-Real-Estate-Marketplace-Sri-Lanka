@@ -21,6 +21,34 @@ if (!function_exists('buyer_is_buyer')) {
     }
 }
 
+if (!function_exists('buyer_should_show_favorite_button')) {
+    /**
+     * Favorites are available to authenticated BUYER accounts only.
+     *
+     * @param array{user_id?: int, role?: string}|null $user
+     */
+    function buyer_should_show_favorite_button(?array $user, bool $hideFavoriteButton = false): bool
+    {
+        if ($hideFavoriteButton) {
+            return false;
+        }
+
+        return buyer_is_buyer($user);
+    }
+}
+
+if (!function_exists('buyer_should_show_guest_favorite_link')) {
+    /**
+     * Guest prompt is shown only when no user is logged in.
+     *
+     * @param array{user_id?: int, role?: string}|null $user
+     */
+    function buyer_should_show_guest_favorite_link(?array $user): bool
+    {
+        return $user === null;
+    }
+}
+
 if (!function_exists('buyer_safe_return_path')) {
     /**
      * Whitelist internal return paths after favorite toggle (open-redirect safe).
@@ -149,6 +177,13 @@ if (!function_exists('buyer_toggle_favorite')) {
             return [false, 'Invalid property.'];
         }
 
+        $roleStmt = $pdo->prepare('SELECT role FROM users WHERE user_id = ? LIMIT 1');
+        $roleStmt->execute([$userId]);
+        $role = strtoupper((string) $roleStmt->fetchColumn());
+        if ($role !== 'BUYER') {
+            return [false, 'Only buyer accounts can manage favorites.'];
+        }
+
         if (marketplace_find_available_property($pdo, $propertyId) === null) {
             return [false, 'This property cannot be saved.'];
         }
@@ -194,6 +229,13 @@ if (!function_exists('buyer_remove_favorite')) {
     {
         if ($userId <= 0 || $propertyId <= 0) {
             return [false, 'Invalid property.'];
+        }
+
+        $roleStmt = $pdo->prepare('SELECT role FROM users WHERE user_id = ? LIMIT 1');
+        $roleStmt->execute([$userId]);
+        $role = strtoupper((string) $roleStmt->fetchColumn());
+        if ($role !== 'BUYER') {
+            return [false, 'Only buyer accounts can manage favorites.'];
         }
 
         $stmt = $pdo->prepare(

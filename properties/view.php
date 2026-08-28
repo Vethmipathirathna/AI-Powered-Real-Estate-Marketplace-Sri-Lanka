@@ -5,6 +5,9 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/_helpers.php';
 require_once __DIR__ . '/../buyer/_helpers.php';
+require_once __DIR__ . '/../includes/ai_helpers.php';
+require_once __DIR__ . '/../includes/ai_client.php';
+require_once __DIR__ . '/../admin/_helpers.php';
 
 $propertyId = (int) ($_GET['id'] ?? 0);
 $property = null;
@@ -13,6 +16,7 @@ $notFound = false;
 $loadError = null;
 $favoritePropertyIds = [];
 $isFavorited = false;
+$aiInsight = null;
 
 try {
     $pdo = db();
@@ -34,6 +38,85 @@ try {
     }
 } catch (Throwable $e) {
     $loadError = 'Unable to load this property right now. Please try again later.';
+}
+
+if ($property !== null && $loadError === null && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (trim((string) ($_POST['form_action'] ?? '')) === 'ai_price_insight') {
+        $detailReturnPath = 'properties/view.php?id=' . $propertyId;
+
+        if (!verify_csrf($_POST['csrf_token'] ?? null)) {
+            ai_store_property_insight($propertyId, [
+                'status' => 'error',
+                'message' => 'Invalid request. Please try again.',
+            ]);
+            redirect($detailReturnPath);
+        }
+
+        $currentUser = current_user();
+        if (!ai_user_can_estimate($currentUser)) {
+            ai_store_property_insight($propertyId, [
+                'status' => 'error',
+                'message' => 'Please log in with an account that can use the AI estimator.',
+            ]);
+            redirect($detailReturnPath);
+        }
+
+        $freshProperty = marketplace_find_available_property(db(), $propertyId);
+        if ($freshProperty === null) {
+            redirect('properties/view.php?id=' . $propertyId);
+        }
+
+        [$clean, $mapErrors] = ai_map_property_to_clean($freshProperty);
+        if ($clean === null) {
+            ai_store_property_insight($propertyId, [
+                'status' => 'error',
+                'message' => 'An AI estimate cannot be generated because some required property information is missing.',
+                'errors' => $mapErrors,
+            ]);
+            redirect($detailReturnPath);
+        }
+
+        $apiResult = ai_api_predict(ai_build_api_payload($clean));
+        if (!$apiResult['ok']) {
+            $message = (string) ($apiResult['error'] ?? 'The AI prediction service is temporarily unavailable. Please try again later.');
+            $details = is_array($apiResult['details'] ?? null) ? $apiResult['details'] : [];
+            ai_store_property_insight($propertyId, [
+                'status' => 'error',
+                'message' => $message,
+                'errors' => $details,
+            ]);
+            redirect($detailReturnPath);
+        }
+
+        $predictedPrice = (float) $apiResult['predicted_price_lkr'];
+        $askingPrice = (float) ($freshProperty['asking_price_lkr'] ?? 0);
+        $comparison = ai_format_listing_comparison($askingPrice, $predictedPrice);
+
+        try {
+            ai_save_prediction(db(), (int) ($currentUser['user_id'] ?? 0), $clean, [
+                'predicted_price_lkr' => $predictedPrice,
+                'model_version' => (string) ($apiResult['model_version'] ?? 'rf_100_depth20_v1'),
+            ]);
+        } catch (Throwable $e) {
+            // Display the estimate even if history persistence fails.
+        }
+
+        ai_store_property_insight($propertyId, [
+            'status' => 'success',
+            'result' => [
+                'predicted_price_lkr' => $predictedPrice,
+                'predicted_price_formatted' => (string) ($apiResult['predicted_price_formatted'] ?? admin_format_lkr($predictedPrice)),
+                'comparison_label' => $comparison['label'],
+                'comparison_amount' => $comparison['amount'],
+                'comparison_percent' => $comparison['percent'],
+            ],
+        ]);
+        redirect($detailReturnPath);
+    }
+}
+
+if ($property !== null && $loadError === null) {
+    $aiInsight = ai_pull_property_insight($propertyId);
 }
 
 $detailReturnPath = 'properties/view.php?id=' . max(0, $propertyId);
@@ -174,18 +257,22 @@ $page_description = $notFound || $property === null
                     $isBuyerViewer = buyer_is_buyer($currentUser);
                     ?>
                     <?php if ($isBuyerViewer): ?>
-                        <section class="summary-panel">
+                        <section class="summary-panel mb-4">
                             <h2 class="summary-title">Contact lister</h2>
                             <p class="text-muted small mb-3">Send a private message about this listing. Contact details stay protected inside RealEstateAI.</p>
                             <a class="btn btn-auth w-100" href="<?php echo e(url('buyer/conversation.php?property_id=' . $propertyId)); ?>">Contact Lister</a>
                         </section>
                     <?php elseif ($currentUser === null): ?>
-                        <section class="summary-panel">
+                        <section class="summary-panel mb-4">
                             <h2 class="summary-title">Contact lister</h2>
                             <p class="text-muted small mb-3">Log in as a buyer to message the lister about this property.</p>
                             <a class="btn btn-auth w-100" href="<?php echo e(url('auth/login.php?return=' . rawurlencode($detailReturnPath))); ?>">Login to Contact Lister</a>
                         </section>
                     <?php endif; ?>
+
+                    <?php
+                    include __DIR__ . '/_ai_price_insight.php';
+                    ?>
                 </div>
             </div>
         <?php endif; ?>
