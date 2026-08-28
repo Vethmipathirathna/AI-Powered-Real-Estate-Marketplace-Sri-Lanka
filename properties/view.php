@@ -66,6 +66,10 @@ if ($property !== null && $loadError === null && $_SERVER['REQUEST_METHOD'] === 
             redirect('properties/view.php?id=' . $propertyId);
         }
 
+        if (!ai_property_supports_price_insight($freshProperty)) {
+            redirect($detailReturnPath);
+        }
+
         [$clean, $mapErrors] = ai_map_property_to_clean($freshProperty);
         if ($clean === null) {
             ai_store_property_insight($propertyId, [

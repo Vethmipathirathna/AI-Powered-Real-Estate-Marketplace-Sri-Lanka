@@ -35,6 +35,42 @@ if (!function_exists('ai_user_can_estimate')) {
     }
 }
 
+if (!function_exists('ai_price_insight_property_types')) {
+    /** @return list<string> */
+    function ai_price_insight_property_types(): array
+    {
+        return ['HOUSE'];
+    }
+}
+
+if (!function_exists('ai_property_supports_price_insight')) {
+    /**
+     * The current sklearn model expects house-specific inputs such as land size (perch).
+     *
+     * @param array<string, mixed> $property
+     */
+    function ai_property_supports_price_insight(array $property): bool
+    {
+        $propertyType = strtoupper(trim((string) ($property['property_type'] ?? '')));
+
+        return in_array($propertyType, ai_price_insight_property_types(), true);
+    }
+}
+
+if (!function_exists('ai_price_insight_unsupported_message')) {
+    function ai_price_insight_unsupported_message(): string
+    {
+        return 'AI Price Insight is currently available for house properties only.';
+    }
+}
+
+if (!function_exists('ai_price_insight_unsupported_detail')) {
+    function ai_price_insight_unsupported_detail(): string
+    {
+        return 'The current estimation model uses house-specific characteristics such as land size.';
+    }
+}
+
 if (!function_exists('ai_encode_water_supply')) {
     function ai_encode_water_supply(string $value): int
     {
