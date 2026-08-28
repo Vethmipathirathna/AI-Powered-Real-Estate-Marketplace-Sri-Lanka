@@ -43,7 +43,31 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     initHomePageAnimations();
+    initLoginFormEnhancements();
 });
+
+function initLoginFormEnhancements() {
+    var toggleButtons = document.querySelectorAll('[data-password-toggle]');
+
+    toggleButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            var targetId = button.getAttribute('aria-controls');
+            if (!targetId) {
+                return;
+            }
+
+            var input = document.getElementById(targetId);
+            if (!input) {
+                return;
+            }
+
+            var isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            button.textContent = isHidden ? 'Hide' : 'Show';
+            button.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+        });
+    });
+}
 
 function initHomePageAnimations() {
     var homePage = document.querySelector('main.home-page');

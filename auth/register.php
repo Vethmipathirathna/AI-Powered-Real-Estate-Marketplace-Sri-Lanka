@@ -107,8 +107,10 @@ $flash = flash_get();
 <?php include __DIR__ . '/../includes/header.php'; ?>
 <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
-<main id="main-content" class="auth-page">
-    <div class="container">
+<main id="main-content" class="auth-page auth-page--branded">
+    <div class="auth-page-media" aria-hidden="true"></div>
+    <div class="auth-page-overlay" aria-hidden="true"></div>
+    <div class="container auth-page-content">
         <div class="auth-card">
             <h1 class="auth-title">Create your account</h1>
             <p class="auth-subtitle">Join RealEstateAI as a buyer or seller. Admin accounts are not available through public registration.</p>
@@ -129,22 +131,22 @@ $flash = flash_get();
                 </div>
             <?php endif; ?>
 
-            <form method="post" action="" novalidate>
+            <form method="post" action="<?php echo e(url('auth/register.php')); ?>" autocomplete="on">
                 <?php echo csrf_field(); ?>
 
                 <div class="mb-3">
                     <label for="full_name" class="form-label">Full Name</label>
-                    <input type="text" class="form-control" id="full_name" name="full_name" required maxlength="150" value="<?php echo e($old['full_name']); ?>">
+                    <input type="text" class="form-control" id="full_name" name="full_name" required maxlength="150" value="<?php echo e($old['full_name']); ?>" autocomplete="name">
                 </div>
 
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" required maxlength="191" value="<?php echo e($old['email']); ?>">
+                    <input type="email" class="form-control" id="email" name="email" required maxlength="191" value="<?php echo e($old['email']); ?>" autocomplete="email" inputmode="email" spellcheck="false">
                 </div>
 
                 <div class="mb-3">
                     <label for="phone" class="form-label">Phone <span class="text-muted">(optional)</span></label>
-                    <input type="text" class="form-control" id="phone" name="phone" maxlength="30" value="<?php echo e($old['phone']); ?>" placeholder="0771234567">
+                    <input type="text" class="form-control" id="phone" name="phone" maxlength="30" value="<?php echo e($old['phone']); ?>" placeholder="0771234567" autocomplete="tel">
                 </div>
 
                 <div class="mb-3">

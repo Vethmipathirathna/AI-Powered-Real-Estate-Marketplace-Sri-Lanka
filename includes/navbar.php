@@ -49,6 +49,19 @@ $isAdminDropdownActive = $isAdmin
     && ($isAdminUsers || $isAdminManageProperties || $isAdminSoldHistory || $isAdminPredictions || $isAdminSupport || $isAdminMessages);
 $showPublicAboutContact = !$isAdmin && !$isBuyer;
 $isBuyerSupport = str_contains($scriptName, '/support/');
+$isProfilePage = str_contains($scriptName, '/profile/');
+$navProfileImage = null;
+
+if ($user !== null) {
+    require_once __DIR__ . '/profile_helpers.php';
+    require_once __DIR__ . '/../config/database.php';
+
+    try {
+        $navProfileImage = profile_fetch_image_path(db(), (int) ($user['user_id'] ?? 0));
+    } catch (Throwable $e) {
+        $navProfileImage = null;
+    }
+}
 ?>
 <header class="site-header">
     <nav class="navbar navbar-expand-lg navbar-light" aria-label="Primary">
@@ -164,9 +177,17 @@ $isBuyerSupport = str_contains($scriptName, '/support/');
                 </ul>
                 <div class="nav-actions d-flex align-items-center gap-2">
                     <?php if ($user !== null): ?>
-                        <span class="nav-user-name" title="Signed in as <?php echo e($user['full_name']); ?>">
-                            <?php echo e($user['full_name']); ?>
-                        </span>
+                        <a
+                            class="nav-user-name<?php echo $isProfilePage ? ' active' : ''; ?>"
+                            href="<?php echo e(url('profile/index.php')); ?>"
+                            title="My Profile"
+                            <?php echo $isProfilePage ? ' aria-current="page"' : ''; ?>
+                        >
+                            <span class="nav-user-avatar-wrap" aria-hidden="true">
+                                <?php echo profile_render_avatar((string) ($user['full_name'] ?? ''), $navProfileImage, ['class' => 'nav-user-avatar']); ?>
+                            </span>
+                            <span class="nav-user-label"><?php echo e($user['full_name']); ?></span>
+                        </a>
                         <a class="btn btn-nav-register" href="<?php echo e(url(dashboard_path_for_role($user['role']))); ?>">Dashboard</a>
                         <a class="btn btn-nav-login" href="<?php echo e(url('auth/logout.php')); ?>">Logout</a>
                     <?php else: ?>

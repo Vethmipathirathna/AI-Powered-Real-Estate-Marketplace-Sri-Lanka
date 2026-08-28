@@ -42,7 +42,7 @@ if (!function_exists('app_base_url')) {
         $dir = str_replace('\\', '/', dirname($script));
         $leaf = basename($dir);
 
-        if (in_array($leaf, ['auth', 'buyer', 'seller', 'admin', 'properties', 'ai', 'support'], true)) {
+        if (in_array($leaf, ['auth', 'buyer', 'seller', 'admin', 'properties', 'ai', 'support', 'profile'], true)) {
             $dir = dirname($dir);
         }
 
@@ -193,7 +193,7 @@ if (!function_exists('login_user')) {
     /**
      * @param array{user_id: int|string, full_name: string, role: string} $user
      */
-    function login_user(array $user): void
+    function login_user(array $user, bool $remember = false): void
     {
         start_app_session();
         session_regenerate_id(true);
@@ -201,6 +201,33 @@ if (!function_exists('login_user')) {
         $_SESSION['user_id'] = (int) $user['user_id'];
         $_SESSION['full_name'] = (string) $user['full_name'];
         $_SESSION['role'] = strtoupper((string) $user['role']);
+
+        auth_apply_remember_session($remember);
+    }
+}
+
+if (!function_exists('auth_apply_remember_session')) {
+    /**
+     * Extend the session cookie lifetime when Remember Me is selected.
+     * Does not store passwords or credentials in cookies.
+     */
+    function auth_apply_remember_session(bool $remember): void
+    {
+        if (!$remember || !ini_get('session.use_cookies')) {
+            return;
+        }
+
+        $params = session_get_cookie_params();
+        $lifetime = 60 * 60 * 24 * 30;
+
+        setcookie(session_name(), session_id(), [
+            'expires' => time() + $lifetime,
+            'path' => $params['path'],
+            'domain' => $params['domain'] ?? '',
+            'secure' => (bool) $params['secure'],
+            'httponly' => (bool) $params['httponly'],
+            'samesite' => $params['samesite'] ?? 'Lax',
+        ]);
     }
 }
 
