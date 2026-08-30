@@ -32,3 +32,6 @@ venv/
 
 # Temporary files
 *.tmp
+# Uploaded property images
+assets/images/properties/*
+!assets/images/properties/.gitkeep
